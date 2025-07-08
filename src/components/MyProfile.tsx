@@ -13,8 +13,9 @@ import {
   Calendar,
   Star,
   TrendingUp,
-  Settings,
-  Camera
+  Camera,
+  Users,
+  User
 } from 'lucide-react';
 
 // Mock current user data
@@ -57,9 +58,22 @@ const mockMyPosts = [
   }
 ];
 
+// Mock followers and following data
+const mockFollowers = [
+  { id: 1, name: 'Emma Wilson', username: 'fantasy_emma', avatar: null },
+  { id: 2, name: 'Sarah Chen', username: 'bookish_sarah', avatar: null },
+  { id: 3, name: 'Mike Johnson', username: 'reading_mike', avatar: null }
+];
+
+const mockFollowing = [
+  { id: 1, name: 'Jane Smith', username: 'romance_jane', avatar: null },
+  { id: 2, name: 'Alex Brown', username: 'mystery_alex', avatar: null }
+];
+
 const MyProfile = () => {
   const [user] = useState(mockCurrentUser);
   const [posts, setPosts] = useState(mockMyPosts);
+  const [showEditProfile, setShowEditProfile] = useState(false);
 
   const handleLike = (postId: number) => {
     setPosts(prevPosts => 
@@ -73,6 +87,12 @@ const MyProfile = () => {
           : post
       )
     );
+  };
+
+  const handleEditProfile = () => {
+    setShowEditProfile(true);
+    // In a real app, this would open a modal or navigate to edit page
+    console.log('Edit profile clicked');
   };
 
   return (
@@ -103,14 +123,10 @@ const MyProfile = () => {
                   <p className="text-muted-foreground text-lg">@{user.username}</p>
                 </div>
                 
-                <div className="mt-4 md:mt-0 flex gap-2">
-                  <Button className="bg-primary hover:bg-primary/90">
+                <div className="mt-4 md:mt-0">
+                  <Button onClick={handleEditProfile} className="bg-primary hover:bg-primary/90">
                     <Edit3 className="h-5 w-5 mr-2" />
                     Edit Profile
-                  </Button>
-                  <Button variant="outline">
-                    <Settings className="h-5 w-5 mr-2" />
-                    Settings
                   </Button>
                 </div>
               </div>
@@ -166,17 +182,17 @@ const MyProfile = () => {
               <BookOpen className="h-4 w-4" />
               My Books
             </TabsTrigger>
-            <TabsTrigger value="saved" className="flex items-center gap-2">
-              <Heart className="h-4 w-4" />
-              Saved
+            <TabsTrigger value="reviews" className="flex items-center gap-2">
+              <Star className="h-4 w-4" />
+              My Reviews
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" />
-              Analytics
+            <TabsTrigger value="followers" className="flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              Followers
             </TabsTrigger>
-            <TabsTrigger value="drafts" className="flex items-center gap-2">
-              <Edit3 className="h-4 w-4" />
-              Drafts
+            <TabsTrigger value="following" className="flex items-center gap-2">
+              <User className="h-4 w-4" />
+              Following
             </TabsTrigger>
           </TabsList>
           
@@ -200,48 +216,50 @@ const MyProfile = () => {
             )}
           </TabsContent>
           
-          <TabsContent value="saved" className="space-y-6">
+          <TabsContent value="reviews" className="space-y-6">
             <div className="bg-card rounded-lg border border-border p-12 text-center">
-              <Heart className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground text-lg">Your saved books will appear here</p>
+              <Star className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground text-lg">Your detailed reviews will appear here</p>
             </div>
           </TabsContent>
           
-          <TabsContent value="analytics" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-card rounded-lg border border-border p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <Star className="h-6 w-6 text-primary" />
-                  <h3 className="text-lg font-semibold">Reading Goals</h3>
-                </div>
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Books this year</span>
-                    <span className="font-medium">34 / 50</span>
+          <TabsContent value="followers" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {mockFollowers.map(follower => (
+                <div key={follower.id} className="bg-card rounded-lg border border-border p-4 flex items-center gap-4">
+                  <Avatar className="w-12 h-12">
+                    <AvatarImage src={follower.avatar || ''} />
+                    <AvatarFallback className="bg-primary/10 text-primary">
+                      {follower.name.split(' ').map(n => n[0]).join('')}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <h4 className="font-semibold">{follower.name}</h4>
+                    <p className="text-sm text-muted-foreground">@{follower.username}</p>
                   </div>
-                  <div className="w-full bg-muted rounded-full h-2">
-                    <div className="bg-primary h-2 rounded-full" style={{ width: '68%' }}></div>
-                  </div>
+                  <Button size="sm" variant="outline">View</Button>
                 </div>
-              </div>
-              
-              <div className="bg-card rounded-lg border border-border p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <TrendingUp className="h-6 w-6 text-primary" />
-                  <h3 className="text-lg font-semibold">Reading Streak</h3>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-primary mb-2">{user.currentStreak}</div>
-                  <div className="text-muted-foreground">Days in a row</div>
-                </div>
-              </div>
+              ))}
             </div>
           </TabsContent>
           
-          <TabsContent value="drafts" className="space-y-6">
-            <div className="bg-card rounded-lg border border-border p-12 text-center">
-              <Edit3 className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground text-lg">Your draft posts will appear here</p>
+          <TabsContent value="following" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {mockFollowing.map(following => (
+                <div key={following.id} className="bg-card rounded-lg border border-border p-4 flex items-center gap-4">
+                  <Avatar className="w-12 h-12">
+                    <AvatarImage src={following.avatar || ''} />
+                    <AvatarFallback className="bg-primary/10 text-primary">
+                      {following.name.split(' ').map(n => n[0]).join('')}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <h4 className="font-semibold">{following.name}</h4>
+                    <p className="text-sm text-muted-foreground">@{following.username}</p>
+                  </div>
+                  <Button size="sm" variant="outline">View</Button>
+                </div>
+              ))}
             </div>
           </TabsContent>
         </Tabs>
