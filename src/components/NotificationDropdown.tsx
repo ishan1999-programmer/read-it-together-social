@@ -82,7 +82,7 @@ const NotificationDropdown = ({
             className="fixed inset-0 z-10" 
             onClick={() => setIsOpen(false)}
           />
-          <Card className="absolute right-0 top-full mt-2 w-80 max-h-96 overflow-y-auto z-20 shadow-lg">
+          <Card className="absolute right-0 top-full mt-2 w-96 max-h-96 overflow-y-auto z-20 shadow-lg">
             <CardContent className="p-0">
               <div className="p-4 border-b border-border">
                 <h3 className="font-semibold text-lg">Notifications</h3>
@@ -106,7 +106,7 @@ const NotificationDropdown = ({
                       onClick={() => handleNotificationClick(notification)}
                     >
                       <div className="flex items-start space-x-3">
-                        <Avatar className="w-8 h-8">
+                        <Avatar className="w-8 h-8 flex-shrink-0">
                           <AvatarImage src={notification.user.avatar || ''} />
                           <AvatarFallback className="bg-primary/10 text-primary text-sm">
                             {notification.user.name.split(' ').map(n => n[0]).join('')}
@@ -118,20 +118,19 @@ const NotificationDropdown = ({
                             {getNotificationIcon(notification.type)}
                             <Link 
                               to={`/profile/${notification.user.username}`}
-                              className="font-medium text-sm hover:text-primary transition-colors"
+                              className="font-medium text-sm hover:text-primary transition-colors whitespace-nowrap"
                             >
                               {notification.user.name}
                             </Link>
+                            <span className="text-sm text-foreground truncate">
+                              {notification.message}
+                            </span>
                           </div>
-                          
-                          <p className="text-sm text-foreground mb-1">
-                            {notification.message}
-                          </p>
                           
                           {notification.postTitle && (
                             <Link 
                               to={`/book/${notification.postId}`}
-                              className="text-xs text-primary hover:underline"
+                              className="text-xs text-primary hover:underline block"
                             >
                               "{notification.postTitle}"
                             </Link>
