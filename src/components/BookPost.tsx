@@ -36,8 +36,8 @@ const BookPost = ({ post, onLike }: BookPostProps) => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
         key={i}
-        className={`h-4 w-4 ${
-          i < rating ? 'fill-black text-black' : 'text-gray-300'
+        className={`h-5 w-5 ${
+          i < rating ? 'fill-amber-500 text-amber-500' : 'text-muted-foreground'
         }`}
       />
     ));
@@ -46,13 +46,13 @@ const BookPost = ({ post, onLike }: BookPostProps) => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Read':
-        return 'bg-black text-white';
+        return 'bg-green-100 text-green-800 border-green-200';
       case 'Currently Reading':
-        return 'bg-gray-200 text-black';
+        return 'bg-blue-100 text-blue-800 border-blue-200';
       case 'Want to Read':
-        return 'bg-gray-100 text-gray-700';
+        return 'bg-amber-100 text-amber-800 border-amber-200';
       default:
-        return 'bg-gray-100 text-gray-700';
+        return 'bg-muted text-muted-foreground border-border';
     }
   };
 
@@ -61,11 +61,11 @@ const BookPost = ({ post, onLike }: BookPostProps) => {
     : post.review;
 
   return (
-    <Card className="bg-white border border-gray-200">
+    <Card className="bg-card border border-border shadow-sm">
       <CardContent className="p-6">
         {/* User Header */}
         <div className="flex items-center space-x-3 mb-4">
-          <div className="h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center">
+          <div className="h-12 w-12 bg-muted rounded-full flex items-center justify-center">
             {post.user.avatar ? (
               <img 
                 src={post.user.avatar} 
@@ -73,54 +73,54 @@ const BookPost = ({ post, onLike }: BookPostProps) => {
                 className="h-full w-full rounded-full object-cover"
               />
             ) : (
-              <User className="h-5 w-5 text-gray-500" />
+              <User className="h-6 w-6 text-muted-foreground" />
             )}
           </div>
           <div>
-            <h3 className="font-semibold text-black">{post.user.name}</h3>
-            <p className="text-sm text-gray-500">@{post.user.username} • {post.timestamp}</p>
+            <h3 className="font-semibold text-foreground">{post.user.name}</h3>
+            <p className="text-sm text-muted-foreground">@{post.user.username} • {post.timestamp}</p>
           </div>
         </div>
 
         {/* Book Info */}
-        <div className="flex space-x-4 mb-4">
-          <div className="h-24 w-16 bg-gray-200 rounded flex items-center justify-center flex-shrink-0">
+        <div className="flex space-x-6 mb-4">
+          <div className="h-32 w-24 bg-muted rounded-lg flex items-center justify-center flex-shrink-0 border border-border">
             {post.book.cover ? (
               <img 
                 src={post.book.cover} 
                 alt={post.book.title}
-                className="h-full w-full rounded object-cover"
+                className="h-full w-full rounded-lg object-cover"
               />
             ) : (
-              <div className="text-gray-400 text-xs text-center p-1">Book Cover</div>
+              <div className="text-muted-foreground text-xs text-center p-2">Book Cover</div>
             )}
           </div>
           <div className="flex-1">
-            <h4 className="font-bold text-black text-lg">{post.book.title}</h4>
-            <p className="text-gray-600 mb-2">by {post.book.author}</p>
-            <div className="flex items-center space-x-2 mb-2">
-              <span className="text-sm text-gray-600">{post.book.genre}</span>
-              <span className="text-gray-300">•</span>
-              <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(post.book.status)}`}>
+            <h4 className="font-bold text-foreground text-xl mb-1">{post.book.title}</h4>
+            <p className="text-muted-foreground mb-3 text-lg">by {post.book.author}</p>
+            <div className="flex items-center space-x-3 mb-3">
+              <span className="text-sm text-muted-foreground">{post.book.genre}</span>
+              <span className="text-muted-foreground">•</span>
+              <span className={`text-sm px-3 py-1 rounded-full border ${getStatusColor(post.book.status)}`}>
                 {post.book.status}
               </span>
             </div>
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center space-x-2">
               {renderStars(post.book.rating)}
-              <span className="text-sm text-gray-600 ml-2">{post.book.rating}/5</span>
+              <span className="text-sm text-muted-foreground ml-2">{post.book.rating}/5</span>
             </div>
           </div>
         </div>
 
         {/* Review */}
         <div className="mb-4">
-          <p className="text-gray-800 leading-relaxed">
+          <p className="text-foreground leading-relaxed">
             {showFullReview ? post.review : truncatedReview}
           </p>
           {post.review.length > 200 && (
             <button
               onClick={() => setShowFullReview(!showFullReview)}
-              className="text-black font-medium text-sm mt-1 hover:underline"
+              className="text-primary font-medium text-sm mt-1 hover:underline"
             >
               {showFullReview ? 'Show less' : 'Show more'}
             </button>
@@ -128,25 +128,25 @@ const BookPost = ({ post, onLike }: BookPostProps) => {
         </div>
 
         {/* Actions */}
-        <div className="flex items-center space-x-6 pt-3 border-t border-gray-100">
+        <div className="flex items-center space-x-6 pt-3 border-t border-border">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onLike(post.id)}
             className={`flex items-center space-x-2 ${
-              post.isLiked ? 'text-red-500' : 'text-gray-600 hover:text-red-500'
+              post.isLiked ? 'text-red-500' : 'text-muted-foreground hover:text-red-500'
             }`}
           >
-            <Heart className={`h-5 w-5 ${post.isLiked ? 'fill-current' : ''}`} />
+            <Heart className={`h-6 w-6 ${post.isLiked ? 'fill-current' : ''}`} />
             <span>{post.likes}</span>
           </Button>
           
           <Button
             variant="ghost"
             size="sm"
-            className="flex items-center space-x-2 text-gray-600 hover:text-black"
+            className="flex items-center space-x-2 text-muted-foreground hover:text-primary"
           >
-            <MessageCircle className="h-5 w-5" />
+            <MessageCircle className="h-6 w-6" />
             <span>{post.comments}</span>
           </Button>
         </div>

@@ -38,18 +38,18 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-accent to-secondary flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
-            <BookOpen className="h-12 w-12 text-amber-600" />
+            <BookOpen className="h-12 w-12 text-primary" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">BookMates</h1>
+          <h1 className="text-3xl font-bold text-primary mb-2">BookMates</h1>
         </div>
 
-        <Card className="shadow-xl border-0">
+        <Card className="shadow-xl border-0 bg-card">
           <CardHeader>
-            <CardTitle>Reset Password</CardTitle>
+            <CardTitle className="text-primary">Reset Password</CardTitle>
             <CardDescription>
               {isEmailSent 
                 ? "We've sent you a password reset link"
@@ -72,7 +72,7 @@ const ForgotPassword = () => {
                   />
                 </div>
 
-                <Button type="submit" className="w-full bg-amber-600 hover:bg-amber-700" disabled={isLoading}>
+                <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
                   {isLoading ? "Sending..." : "Send Reset Link"}
                 </Button>
               </form>
@@ -83,14 +83,14 @@ const ForgotPassword = () => {
                     Password reset instructions have been sent to <strong>{email}</strong>
                   </p>
                 </div>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">
                   Didn't receive the email? Check your spam folder or try again.
                 </p>
               </div>
             )}
 
             <div className="mt-6 text-center">
-              <Link to="/login" className="inline-flex items-center text-sm text-amber-600 hover:underline">
+              <Link to="/login" className="inline-flex items-center text-sm text-primary hover:underline">
                 <ArrowLeft className="h-4 w-4 mr-1" />
                 Back to Sign In
               </Link>

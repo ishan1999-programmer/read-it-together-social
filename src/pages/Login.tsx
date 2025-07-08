@@ -41,19 +41,19 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-accent to-secondary flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
-            <BookOpen className="h-12 w-12 text-amber-600" />
+            <BookOpen className="h-12 w-12 text-primary" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">BookMates</h1>
-          <p className="text-gray-600">Welcome back, fellow reader!</p>
+          <h1 className="text-3xl font-bold text-primary mb-2">BookMates</h1>
+          <p className="text-muted-foreground">Welcome back, fellow reader!</p>
         </div>
 
-        <Card className="shadow-xl border-0">
+        <Card className="shadow-xl border-0 bg-card">
           <CardHeader>
-            <CardTitle>Sign In</CardTitle>
+            <CardTitle className="text-primary">Sign In</CardTitle>
             <CardDescription>
               Enter your credentials to access your reading community
             </CardDescription>
@@ -93,18 +93,18 @@ const Login = () => {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full bg-amber-600 hover:bg-amber-700" disabled={isLoading}>
+              <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
                 {isLoading ? "Signing in..." : "Sign In"}
               </Button>
             </form>
 
             <div className="mt-6 text-center space-y-2">
-              <Link to="/forgot-password" className="text-sm text-amber-600 hover:underline">
+              <Link to="/forgot-password" className="text-sm text-primary hover:underline">
                 Forgot your password?
               </Link>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 Don't have an account?{' '}
-                <Link to="/signup" className="text-amber-600 hover:underline font-medium">
+                <Link to="/signup" className="text-primary hover:underline font-medium">
                   Sign up
                 </Link>
               </p>

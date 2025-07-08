@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -63,19 +62,19 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-accent to-secondary flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
-            <BookOpen className="h-12 w-12 text-amber-600" />
+            <BookOpen className="h-12 w-12 text-primary" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">BookMates</h1>
-          <p className="text-gray-600">Join our community of book lovers!</p>
+          <h1 className="text-3xl font-bold text-primary mb-2">BookMates</h1>
+          <p className="text-muted-foreground">Join our community of book lovers!</p>
         </div>
 
-        <Card className="shadow-xl border-0">
+        <Card className="shadow-xl border-0 bg-card">
           <CardHeader>
-            <CardTitle>Create Account</CardTitle>
+            <CardTitle className="text-primary">Create Account</CardTitle>
             <CardDescription>
               Start your journey with fellow readers
             </CardDescription>
@@ -148,15 +147,15 @@ const Signup = () => {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full bg-amber-600 hover:bg-amber-700" disabled={isLoading}>
+              <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
                 {isLoading ? "Creating account..." : "Create Account"}
               </Button>
             </form>
 
             <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 Already have an account?{' '}
-                <Link to="/login" className="text-amber-600 hover:underline font-medium">
+                <Link to="/login" className="text-primary hover:underline font-medium">
                   Sign in
                 </Link>
               </p>

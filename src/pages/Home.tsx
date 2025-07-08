@@ -91,11 +91,11 @@ const Home = () => {
     <Layout>
       <div className="max-w-2xl mx-auto">
         <div className="py-6">
-          <h1 className="text-2xl font-bold text-black mb-6">Your Feed</h1>
+          <h1 className="text-3xl font-bold text-primary mb-6">Your Feed</h1>
           
           {posts.length === 0 ? (
-            <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
-              <p className="text-gray-500">
+            <div className="bg-card rounded-lg border border-border p-8 text-center">
+              <p className="text-muted-foreground">
                 Your feed will appear here once you start following other readers and they begin sharing their books.
               </p>
             </div>

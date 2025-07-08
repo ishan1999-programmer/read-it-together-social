@@ -18,11 +18,11 @@ const Layout = ({ children }: LayoutProps) => {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen bg-gray-50 w-full">
+      <div className="min-h-screen bg-background w-full">
         <Navbar />
         <div className="flex w-full">
           <Sidebar />
-          <main className="flex-1 p-6">
+          <main className="flex-1 p-6 bg-background">
             {children}
           </main>
         </div>

@@ -29,26 +29,26 @@ const Sidebar = () => {
   const isActive = (url: string) => location.pathname === url;
 
   return (
-    <SidebarComponent className={state === "collapsed" ? "w-16" : "w-64"} collapsible="icon">
+    <SidebarComponent className={state === "collapsed" ? "w-20" : "w-72"} collapsible="icon">
       <SidebarTrigger className="m-4 md:hidden" />
       
-      <SidebarContent className="bg-white border-r border-gray-200">
+      <SidebarContent className="bg-sidebar border-r border-sidebar-border">
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-2 p-4">
+            <SidebarMenu className="space-y-3 p-6">
               {navigationItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <Link 
                       to={item.url} 
-                      className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${
+                      className={`flex items-center space-x-4 p-4 rounded-lg transition-colors text-lg ${
                         isActive(item.url) 
-                          ? 'bg-black text-white font-medium' 
-                          : 'text-gray-600 hover:bg-gray-100'
+                          ? 'bg-primary text-primary-foreground font-semibold' 
+                          : 'text-sidebar-foreground hover:bg-sidebar-accent'
                       }`}
                     >
-                      <item.icon className="h-5 w-5" />
-                      {state !== "collapsed" && <span>{item.title}</span>}
+                      <item.icon className="h-7 w-7" />
+                      {state !== "collapsed" && <span className="text-lg">{item.title}</span>}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
