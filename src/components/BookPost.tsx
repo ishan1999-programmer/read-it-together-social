@@ -4,6 +4,7 @@ import { Heart, MessageCircle, Star, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import Comments from './Comments';
 
 interface BookPostProps {
   post: {
@@ -28,10 +29,63 @@ interface BookPostProps {
     isLiked: boolean;
   };
   onLike: (postId: number) => void;
+  showComments?: boolean;
 }
 
-const BookPost = ({ post, onLike }: BookPostProps) => {
+const BookPost = ({ post, onLike, showComments = false }: BookPostProps) => {
   const [showFullReview, setShowFullReview] = useState(false);
+  const [commentsExpanded, setCommentsExpanded] = useState(showComments);
+  
+  // Mock comments data
+  const [comments, setComments] = useState([
+    {
+      id: 1,
+      user: {
+        name: 'Alex Chen',
+        username: 'scifi_alex',
+        avatar: null
+      },
+      content: 'I completely agree! This book was phenomenal.',
+      timestamp: '1 day ago',
+      isOwn: false
+    },
+    {
+      id: 2,
+      user: {
+        name: 'Current User',
+        username: 'current_user',
+        avatar: null
+      },
+      content: 'Adding this to my TBR list right now!',
+      timestamp: '12 hours ago',
+      isOwn: true
+    }
+  ]);
+
+  const handleAddComment = (content: string) => {
+    const newComment = {
+      id: comments.length + 1,
+      user: {
+        name: 'Current User',
+        username: 'current_user',
+        avatar: null
+      },
+      content,
+      timestamp: 'just now',
+      isOwn: true
+    };
+    setComments([...comments, newComment]);
+  };
+
+  const handleDeleteComment = (commentId: number) => {
+    setComments(comments.filter(c => c.id !== commentId));
+  };
+
+  const handleEditComment = (commentId: number, content: string) => {
+    setComments(comments.map(c => 
+      c.id === commentId ? { ...c, content } : c
+    ));
+  };
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -150,12 +204,25 @@ const BookPost = ({ post, onLike }: BookPostProps) => {
           <Button
             variant="ghost"
             size="sm"
+            onClick={() => setCommentsExpanded(!commentsExpanded)}
             className="flex items-center space-x-2 text-muted-foreground hover:text-primary"
           >
             <MessageCircle className="h-6 w-6" />
-            <span>{post.comments}</span>
+            <span>{comments.length}</span>
           </Button>
         </div>
+
+        {/* Comments Section */}
+        {commentsExpanded && (
+          <div className="mt-6 pt-6 border-t border-border">
+            <Comments
+              comments={comments}
+              onAddComment={handleAddComment}
+              onDeleteComment={handleDeleteComment}
+              onEditComment={handleEditComment}
+            />
+          </div>
+        )}
       </CardContent>
     </Card>
   );

@@ -22,7 +22,7 @@ const Layout = ({ children }: LayoutProps) => {
         <Navbar />
         <div className="flex w-full">
           <Sidebar />
-          <main className="flex-1 p-6 bg-background">
+          <main className="flex-1 ml-0 lg:ml-80 p-6 bg-background">
             {children}
           </main>
         </div>
