@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -6,6 +5,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Bell, Heart, MessageCircle, UserPlus, Check, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Notification {
   id: number;
@@ -36,6 +36,7 @@ const NotificationDropdown = ({
   onRejectFollowRequest 
 }: NotificationDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const isMobile = useIsMobile();
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
   const getNotificationIcon = (type: string) => {
@@ -65,7 +66,7 @@ const NotificationDropdown = ({
         onClick={() => setIsOpen(!isOpen)}
         className="relative hover:bg-accent p-3"
       >
-        <Bell className="h-8 w-8 text-primary" />
+        <Bell className={`${isMobile ? 'h-6 w-6' : 'h-8 w-8'} text-primary`} />
         {unreadCount > 0 && (
           <Badge 
             variant="destructive" 
@@ -82,7 +83,9 @@ const NotificationDropdown = ({
             className="fixed inset-0 z-10" 
             onClick={() => setIsOpen(false)}
           />
-          <Card className="absolute right-0 top-full mt-2 w-96 max-h-96 overflow-y-auto z-20 shadow-lg">
+          <Card className={`absolute right-0 top-full mt-2 ${
+            isMobile ? 'w-80 max-w-[calc(100vw-2rem)]' : 'w-96'
+          } max-h-96 overflow-y-auto z-20 shadow-lg`}>
             <CardContent className="p-0">
               <div className="p-4 border-b border-border">
                 <h3 className="font-semibold text-lg">Notifications</h3>

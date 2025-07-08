@@ -4,6 +4,7 @@ import { Navigate } from 'react-router-dom';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -11,6 +12,7 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
   const user = localStorage.getItem('user');
+  const isMobile = useIsMobile();
   
   if (!user) {
     return <Navigate to="/login" replace />;
@@ -22,7 +24,9 @@ const Layout = ({ children }: LayoutProps) => {
         <Navbar />
         <div className="flex w-full">
           <Sidebar />
-          <main className="flex-1 p-6 bg-background" style={{ marginLeft: '320px' }}>
+          <main className={`flex-1 p-4 md:p-6 bg-background transition-all duration-300 ${
+            isMobile ? 'ml-0' : 'ml-80'
+          }`}>
             {children}
           </main>
         </div>

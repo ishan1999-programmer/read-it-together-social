@@ -1,11 +1,16 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Plus, User } from 'lucide-react';
+import { BookOpen, Plus, User, Menu } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import NotificationDropdown from './NotificationDropdown';
+import { useSidebar } from '@/components/ui/sidebar';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Navbar = () => {
+  const { toggleSidebar } = useSidebar();
+  const isMobile = useIsMobile();
+  
   // Mock notifications data
   const [notifications, setNotifications] = useState([
     {
@@ -69,18 +74,38 @@ const Navbar = () => {
   return (
     <nav className="bg-card border-b border-border px-4 py-3 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        {/* Logo and Brand */}
-        <Link to="/" className="flex items-center space-x-2">
-          <BookOpen className="h-12 w-12 text-primary" />
-          <span className="text-3xl font-bold text-primary">BookMates</span>
-        </Link>
+        {/* Left Side - Menu & Logo */}
+        <div className="flex items-center space-x-4">
+          {isMobile && (
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={toggleSidebar}
+              className="hover:bg-accent"
+            >
+              <Menu className="h-6 w-6 text-primary" />
+            </Button>
+          )}
+          
+          <Link to="/" className="flex items-center space-x-2">
+            <BookOpen className={`${isMobile ? 'h-8 w-8' : 'h-12 w-12'} text-primary`} />
+            <span className={`${isMobile ? 'text-xl' : 'text-3xl'} font-bold text-primary`}>
+              BookMates
+            </span>
+          </Link>
+        </div>
 
         {/* Right Side Actions */}
-        <div className="flex items-center space-x-4">
-          <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-6 py-3">
+        <div className="flex items-center space-x-2 md:space-x-4">
+          <Button 
+            asChild 
+            className={`bg-primary hover:bg-primary/90 text-primary-foreground ${
+              isMobile ? 'text-sm px-3 py-2' : 'text-lg px-6 py-3'
+            }`}
+          >
             <Link to="/add-book" className="flex items-center space-x-2">
-              <Plus className="h-6 w-6" />
-              <span>Create Post</span>
+              <Plus className={`${isMobile ? 'h-4 w-4' : 'h-6 w-6'}`} />
+              {!isMobile && <span>Create Post</span>}
             </Link>
           </Button>
           
@@ -93,7 +118,7 @@ const Navbar = () => {
           
           <Button variant="ghost" size="icon" asChild className="hover:bg-accent p-3">
             <Link to="/profile">
-              <User className="h-8 w-8 text-primary" />
+              <User className={`${isMobile ? 'h-6 w-6' : 'h-8 w-8'} text-primary`} />
             </Link>
           </Button>
         </div>
