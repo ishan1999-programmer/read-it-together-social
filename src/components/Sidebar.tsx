@@ -1,8 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Compass, Search, User, Settings, Menu } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Home, Compass, Search, User, Settings } from 'lucide-react';
 import { 
   Sidebar as SidebarComponent,
   SidebarContent,
@@ -25,12 +24,12 @@ const navigationItems = [
 
 const Sidebar = () => {
   const location = useLocation();
-  const { collapsed } = useSidebar();
+  const { state } = useSidebar();
 
   const isActive = (url: string) => location.pathname === url;
 
   return (
-    <SidebarComponent className={collapsed ? "w-16" : "w-64"} collapsible>
+    <SidebarComponent className={state === "collapsed" ? "w-16" : "w-64"} collapsible="icon">
       <SidebarTrigger className="m-4 md:hidden" />
       
       <SidebarContent className="bg-white border-r border-gray-200">
@@ -44,12 +43,12 @@ const Sidebar = () => {
                       to={item.url} 
                       className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${
                         isActive(item.url) 
-                          ? 'bg-amber-100 text-amber-700 font-medium' 
+                          ? 'bg-black text-white font-medium' 
                           : 'text-gray-600 hover:bg-gray-100'
                       }`}
                     >
                       <item.icon className="h-5 w-5" />
-                      {!collapsed && <span>{item.title}</span>}
+                      {state !== "collapsed" && <span>{item.title}</span>}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
