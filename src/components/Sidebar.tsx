@@ -29,26 +29,26 @@ const Sidebar = () => {
   const isActive = (url: string) => location.pathname === url;
 
   return (
-    <SidebarComponent className={state === "collapsed" ? "w-20" : "w-72"} collapsible="icon">
+    <SidebarComponent className={state === "collapsed" ? "w-20" : "w-80"} collapsible="icon">
       <SidebarTrigger className="m-4 md:hidden" />
       
       <SidebarContent className="bg-sidebar border-r border-sidebar-border">
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-3 p-6">
+            <SidebarMenu className="space-y-4 p-6">
               {navigationItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <Link 
                       to={item.url} 
-                      className={`flex items-center space-x-4 p-4 rounded-lg transition-colors text-lg ${
+                      className={`flex items-center space-x-5 p-5 rounded-lg transition-colors text-xl ${
                         isActive(item.url) 
                           ? 'bg-primary text-primary-foreground font-semibold' 
                           : 'text-sidebar-foreground hover:bg-sidebar-accent'
                       }`}
                     >
-                      <item.icon className="h-7 w-7" />
-                      {state !== "collapsed" && <span className="text-lg">{item.title}</span>}
+                      <item.icon className="h-8 w-8" />
+                      {state !== "collapsed" && <span className="text-xl">{item.title}</span>}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
