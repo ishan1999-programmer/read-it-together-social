@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Layout from '@/components/Layout';
+import MyProfile from '@/components/MyProfile';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -86,6 +87,12 @@ const mockUserPosts = [
 
 const Profile = () => {
   const { username } = useParams();
+  
+  // If no username is provided, show the current user's profile
+  if (!username) {
+    return <MyProfile />;
+  }
+
   const [user] = useState(mockUser);
   const [posts, setPosts] = useState(mockUserPosts);
   const [isFollowing, setIsFollowing] = useState(user.isFollowing);
@@ -150,21 +157,14 @@ const Profile = () => {
                 </div>
                 
                 <div className="mt-4 md:mt-0">
-                  {user.isOwnProfile ? (
-                    <Button className="bg-primary hover:bg-primary/90">
-                      <Edit3 className="h-5 w-5 mr-2" />
-                      Edit Profile
-                    </Button>
-                  ) : (
-                    <Button 
-                      onClick={handleFollow}
-                      variant={isFollowing ? "outline" : "default"}
-                      className={isFollowing ? "" : "bg-primary hover:bg-primary/90"}
-                    >
-                      <UserPlus className="h-5 w-5 mr-2" />
-                      {isPending ? 'Requested' : isFollowing ? 'Following' : 'Follow'}
-                    </Button>
-                  )}
+                  <Button 
+                    onClick={handleFollow}
+                    variant={isFollowing ? "outline" : "default"}
+                    className={isFollowing ? "" : "bg-primary hover:bg-primary/90"}
+                  >
+                    <UserPlus className="h-5 w-5 mr-2" />
+                    {isPending ? 'Requested' : isFollowing ? 'Following' : 'Follow'}
+                  </Button>
                 </div>
               </div>
               

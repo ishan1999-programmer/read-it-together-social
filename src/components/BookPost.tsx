@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Heart, MessageCircle, Star, User } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -77,14 +78,19 @@ const BookPost = ({ post, onLike }: BookPostProps) => {
             )}
           </div>
           <div>
-            <h3 className="font-semibold text-foreground">{post.user.name}</h3>
+            <Link 
+              to={`/profile/${post.user.username}`}
+              className="font-semibold text-foreground hover:text-primary transition-colors"
+            >
+              {post.user.name}
+            </Link>
             <p className="text-sm text-muted-foreground">@{post.user.username} • {post.timestamp}</p>
           </div>
         </div>
 
         {/* Book Info */}
         <div className="flex space-x-6 mb-4">
-          <div className="h-32 w-24 bg-muted rounded-lg flex items-center justify-center flex-shrink-0 border border-border">
+          <div className="h-40 w-32 bg-muted rounded-lg flex items-center justify-center flex-shrink-0 border border-border">
             {post.book.cover ? (
               <img 
                 src={post.book.cover} 
