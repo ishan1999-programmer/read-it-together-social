@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import MyProfile from '@/components/MyProfile';
@@ -7,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 import BookPost from '@/components/BookPost';
 import { 
   Users, 
@@ -16,7 +16,8 @@ import {
   Calendar,
   Lock,
   Star,
-  User
+  User,
+  BookMarked
 } from 'lucide-react';
 
 // Mock user data
@@ -95,6 +96,17 @@ const mockFollowing = [
   { id: 2, name: 'Alex Brown', username: 'mystery_alex', avatar: null }
 ];
 
+interface WantToReadBook {
+  id: string;
+  title: string;
+  authors: string[];
+  categories?: string[];
+  publishedDate?: string;
+  imageLinks?: {
+    thumbnail?: string;
+  };
+}
+
 const Profile = () => {
   const { username } = useParams();
   
@@ -107,6 +119,35 @@ const Profile = () => {
   const [posts, setPosts] = useState(mockUserPosts);
   const [isFollowing, setIsFollowing] = useState(user.isFollowing);
   const [isPending, setIsPending] = useState(user.isPendingRequest);
+  const [wantToReadBooks, setWantToReadBooks] = useState<WantToReadBook[]>([]);
+
+  // Load mock "Want to Read" books for other users (in a real app, this would come from the backend)
+  useEffect(() => {
+    // Mock data for other users' want to read books
+    const mockWantToReadBooks: WantToReadBook[] = [
+      {
+        id: '1',
+        title: 'The Name of the Wind',
+        authors: ['Patrick Rothfuss'],
+        categories: ['Fantasy', 'Adventure'],
+        publishedDate: '2007-03-27',
+        imageLinks: {
+          thumbnail: 'https://books.google.com/books/content?id=example1&printsec=frontcover&img=1&zoom=1&source=gbs_api'
+        }
+      },
+      {
+        id: '2',
+        title: 'Mistborn: The Final Empire',
+        authors: ['Brandon Sanderson'],
+        categories: ['Fantasy', 'Magic'],
+        publishedDate: '2006-07-17',
+        imageLinks: {
+          thumbnail: 'https://books.google.com/books/content?id=example2&printsec=frontcover&img=1&zoom=1&source=gbs_api'
+        }
+      }
+    ];
+    setWantToReadBooks(mockWantToReadBooks);
+  }, [username]);
 
   const handleLike = (postId: number) => {
     setPosts(prevPosts => 
@@ -129,6 +170,16 @@ const Profile = () => {
       setIsFollowing(!isFollowing);
       setIsPending(false);
     }
+  };
+
+  const formatAuthors = (authors: string[]) => {
+    if (!authors || authors.length === 0) return 'Unknown Author';
+    return authors.join(', ');
+  };
+
+  const formatGenres = (categories?: string[]) => {
+    if (!categories || categories.length === 0) return 'Unknown Genre';
+    return categories.slice(0, 2).join(', ');
   };
 
   return (
@@ -216,7 +267,7 @@ const Profile = () => {
         {/* Content Tabs */}
         {(!user.isPrivate || isFollowing || user.isOwnProfile) ? (
           <Tabs defaultValue="books" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-8">
+            <TabsList className="grid w-full grid-cols-5 mb-8">
               <TabsTrigger value="books" className="flex items-center gap-2">
                 <BookOpen className="h-4 w-4" />
                 Books
@@ -224,6 +275,10 @@ const Profile = () => {
               <TabsTrigger value="reviews" className="flex items-center gap-2">
                 <Star className="h-4 w-4" />
                 Reviews
+              </TabsTrigger>
+              <TabsTrigger value="want-to-read" className="flex items-center gap-2">
+                <BookMarked className="h-4 w-4" />
+                Want to Read
               </TabsTrigger>
               <TabsTrigger value="followers" className="flex items-center gap-2">
                 <Users className="h-4 w-4" />
@@ -257,6 +312,56 @@ const Profile = () => {
                 <Star className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
                 <p className="text-muted-foreground text-lg">Detailed reviews will appear here</p>
               </div>
+            </TabsContent>
+
+            <TabsContent value="want-to-read" className="space-y-6">
+              {wantToReadBooks.length === 0 ? (
+                <div className="bg-card rounded-lg border border-border p-12 text-center">
+                  <BookMarked className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground text-lg">No books in reading list</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {wantToReadBooks.map((book) => (
+                    <Card key={book.id} className="group hover:shadow-lg transition-all duration-300">
+                      <CardContent className="p-4">
+                        <div className="flex gap-4">
+                          <div className="flex-shrink-0 w-16 h-24 bg-muted rounded-lg overflow-hidden">
+                            {book.imageLinks?.thumbnail ? (
+                              <img
+                                src={book.imageLinks.thumbnail.replace('http:', 'https:')}
+                                alt={book.title}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <BookOpen className="h-6 w-6 text-muted-foreground" />
+                              </div>
+                            )}
+                          </div>
+                          
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-semibold text-sm mb-1 line-clamp-2 leading-tight">
+                              {book.title}
+                            </h3>
+                            <p className="text-xs text-muted-foreground mb-2 line-clamp-1">
+                              by {formatAuthors(book.authors)}
+                            </p>
+                            <p className="text-xs text-muted-foreground mb-2">
+                              {formatGenres(book.categories)}
+                            </p>
+                            {book.publishedDate && (
+                              <p className="text-xs text-muted-foreground">
+                                {new Date(book.publishedDate).getFullYear()}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
             </TabsContent>
             
             <TabsContent value="followers" className="space-y-6">
