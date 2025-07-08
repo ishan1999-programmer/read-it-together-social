@@ -42,7 +42,9 @@ const mockComments = [
     },
     content: 'I completely agree! This book was phenomenal. The character development was incredible.',
     timestamp: '1 day ago',
-    isOwn: false
+    isOwn: false,
+    likes: 3,
+    isLiked: false
   },
   {
     id: 2,
@@ -53,7 +55,9 @@ const mockComments = [
     },
     content: 'Adding this to my TBR list right now! Your review convinced me 📚',
     timestamp: '18 hours ago',
-    isOwn: false
+    isOwn: false,
+    likes: 1,
+    isLiked: false
   },
   {
     id: 3,
@@ -64,7 +68,9 @@ const mockComments = [
     },
     content: 'Same here! I couldn\'t put it down once I started reading.',
     timestamp: '12 hours ago',
-    isOwn: true
+    isOwn: true,
+    likes: 0,
+    isLiked: false
   }
 ];
 
@@ -73,7 +79,6 @@ const BookDetails = () => {
   const [book, setBook] = useState(mockBook);
   const [comments, setComments] = useState(mockComments);
   const [newComment, setNewComment] = useState('');
-  const [isEditing, setIsEditing] = useState(false);
 
   const handleLike = () => {
     setBook(prev => ({
@@ -81,6 +86,18 @@ const BookDetails = () => {
       isLiked: !prev.isLiked,
       likes: prev.isLiked ? prev.likes - 1 : prev.likes + 1
     }));
+  };
+
+  const handleCommentLike = (commentId: number) => {
+    setComments(prev => prev.map(comment => 
+      comment.id === commentId 
+        ? {
+            ...comment,
+            isLiked: !comment.isLiked,
+            likes: comment.isLiked ? comment.likes - 1 : comment.likes + 1
+          }
+        : comment
+    ));
   };
 
   const handleAddComment = () => {
@@ -94,7 +111,9 @@ const BookDetails = () => {
         },
         content: newComment,
         timestamp: 'just now',
-        isOwn: true
+        isOwn: true,
+        likes: 0,
+        isLiked: false
       };
       setComments([...comments, comment]);
       setNewComment('');
@@ -131,44 +150,30 @@ const BookDetails = () => {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto pt-4">
+      <div className="max-w-4xl mx-auto">
         <Card className="bg-card border border-border shadow-sm mb-8">
           <CardContent className="p-8">
             {/* User Header */}
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center space-x-3">
-                <div className="h-12 w-12 bg-muted rounded-full flex items-center justify-center">
-                  {book.user.avatar ? (
-                    <img 
-                      src={book.user.avatar} 
-                      alt={book.user.name}
-                      className="h-full w-full rounded-full object-cover"
-                    />
-                  ) : (
-                    <User className="h-6 w-6 text-muted-foreground" />
-                  )}
-                </div>
-                <div>
-                  <Link 
-                    to={`/profile/${book.user.username}`}
-                    className="font-semibold text-foreground hover:text-primary transition-colors"
-                  >
-                    {book.user.name}
-                  </Link>
-                  <p className="text-sm text-muted-foreground">@{book.user.username} • {book.timestamp}</p>
-                </div>
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="h-12 w-12 bg-muted rounded-full flex items-center justify-center">
+                {book.user.avatar ? (
+                  <img 
+                    src={book.user.avatar} 
+                    alt={book.user.name}
+                    className="h-full w-full rounded-full object-cover"
+                  />
+                ) : (
+                  <User className="h-6 w-6 text-muted-foreground" />
+                )}
               </div>
-              
-              {/* Edit/Delete buttons for book owner */}
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={() => setIsEditing(!isEditing)}>
-                  <Edit className="h-4 w-4 mr-2" />
-                  Edit
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete
-                </Button>
+              <div>
+                <Link 
+                  to={`/profile/${book.user.username}`}
+                  className="font-semibold text-foreground hover:text-primary transition-colors"
+                >
+                  {book.user.name}
+                </Link>
+                <p className="text-sm text-muted-foreground">@{book.user.username} • {book.timestamp}</p>
               </div>
             </div>
 
@@ -294,7 +299,21 @@ const BookDetails = () => {
                     </Button>
                   )}
                 </div>
-                <p className="text-foreground">{comment.content}</p>
+                
+                <p className="text-foreground mb-3">{comment.content}</p>
+                
+                {/* Comment Like Button */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleCommentLike(comment.id)}
+                  className={`flex items-center space-x-2 ${
+                    comment.isLiked ? 'text-red-500' : 'text-muted-foreground hover:text-red-500'
+                  }`}
+                >
+                  <Heart className={`h-4 w-4 ${comment.isLiked ? 'fill-current' : ''}`} />
+                  <span>{comment.likes}</span>
+                </Button>
               </CardContent>
             </Card>
           ))}

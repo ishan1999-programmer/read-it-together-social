@@ -24,10 +24,10 @@ const Layout = ({ children }: LayoutProps) => {
         <Navbar />
         <div className="flex w-full">
           <Sidebar />
-          <main className={`flex-1 p-4 md:p-6 bg-background transition-all duration-300 ${
-            isMobile ? 'ml-0' : 'ml-80'
-          }`}>
-            {children}
+          <main className="flex-1 bg-background min-h-[calc(100vh-4rem)]">
+            <div className={`${isMobile ? 'p-4' : 'p-6'} w-full`}>
+              {children}
+            </div>
           </main>
         </div>
       </div>

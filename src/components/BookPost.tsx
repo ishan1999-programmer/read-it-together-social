@@ -4,7 +4,8 @@ import { Heart, MessageCircle, Star, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import Comments from './Comments';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Textarea } from '@/components/ui/textarea';
 
 interface BookPostProps {
   post: {
@@ -35,22 +36,12 @@ interface BookPostProps {
 const BookPost = ({ post, onLike, showComments = false }: BookPostProps) => {
   const [showFullReview, setShowFullReview] = useState(false);
   const [commentsExpanded, setCommentsExpanded] = useState(showComments);
+  const [newComment, setNewComment] = useState('');
   
-  // Mock comments data
+  // Mock comments data - only show user's own comments in feed
   const [comments, setComments] = useState([
     {
       id: 1,
-      user: {
-        name: 'Alex Chen',
-        username: 'scifi_alex',
-        avatar: null
-      },
-      content: 'I completely agree! This book was phenomenal.',
-      timestamp: '1 day ago',
-      isOwn: false
-    },
-    {
-      id: 2,
       user: {
         name: 'Current User',
         username: 'current_user',
@@ -58,32 +49,45 @@ const BookPost = ({ post, onLike, showComments = false }: BookPostProps) => {
       },
       content: 'Adding this to my TBR list right now!',
       timestamp: '12 hours ago',
-      isOwn: true
+      isOwn: true,
+      likes: 0,
+      isLiked: false
     }
   ]);
 
-  const handleAddComment = (content: string) => {
-    const newComment = {
-      id: comments.length + 1,
-      user: {
-        name: 'Current User',
-        username: 'current_user',
-        avatar: null
-      },
-      content,
-      timestamp: 'just now',
-      isOwn: true
-    };
-    setComments([...comments, newComment]);
+  const handleAddComment = () => {
+    if (newComment.trim()) {
+      const comment = {
+        id: comments.length + 1,
+        user: {
+          name: 'Current User',
+          username: 'current_user',
+          avatar: null
+        },
+        content: newComment,
+        timestamp: 'just now',
+        isOwn: true,
+        likes: 0,
+        isLiked: false
+      };
+      setComments([...comments, comment]);
+      setNewComment('');
+    }
   };
 
   const handleDeleteComment = (commentId: number) => {
     setComments(comments.filter(c => c.id !== commentId));
   };
 
-  const handleEditComment = (commentId: number, content: string) => {
-    setComments(comments.map(c => 
-      c.id === commentId ? { ...c, content } : c
+  const handleCommentLike = (commentId: number) => {
+    setComments(comments.map(comment => 
+      comment.id === commentId 
+        ? {
+            ...comment,
+            isLiked: !comment.isLiked,
+            likes: comment.isLiked ? comment.likes - 1 : comment.likes + 1
+          }
+        : comment
     ));
   };
 
@@ -212,15 +216,65 @@ const BookPost = ({ post, onLike, showComments = false }: BookPostProps) => {
           </Button>
         </div>
 
-        {/* Comments Section */}
+        {/* Comments Section - Only show user's own comments in feed */}
         {commentsExpanded && (
           <div className="mt-6 pt-6 border-t border-border">
-            <Comments
-              comments={comments}
-              onAddComment={handleAddComment}
-              onDeleteComment={handleDeleteComment}
-              onEditComment={handleEditComment}
-            />
+            <div className="space-y-4">
+              {/* Add Comment */}
+              <div className="flex space-x-3">
+                <Avatar className="w-8 h-8">
+                  <AvatarFallback className="bg-primary/10 text-primary text-sm">U</AvatarFallback>
+                </Avatar>
+                <div className="flex-1">
+                  <Textarea
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    placeholder="Add a comment..."
+                    rows={2}
+                    className="mb-3 resize-none"
+                  />
+                  <Button 
+                    onClick={handleAddComment} 
+                    disabled={!newComment.trim()}
+                    size="sm"
+                  >
+                    Post Comment
+                  </Button>
+                </div>
+              </div>
+
+              {/* User's Comments Only */}
+              {comments.filter(comment => comment.isOwn).map(comment => (
+                <div key={comment.id} className="flex space-x-3">
+                  <Avatar className="w-8 h-8">
+                    <AvatarImage src={comment.user.avatar || ''} />
+                    <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                      {comment.user.name.split(' ').map(n => n[0]).join('')}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2 mb-1">
+                      <span className="font-medium text-foreground text-sm">{comment.user.name}</span>
+                      <span className="text-xs text-muted-foreground">{comment.timestamp}</span>
+                    </div>
+                    <p className="text-foreground text-sm mb-2">{comment.content}</p>
+                    <div className="flex items-center space-x-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleCommentLike(comment.id)}
+                        className={`flex items-center space-x-1 h-6 px-2 ${
+                          comment.isLiked ? 'text-red-500' : 'text-muted-foreground hover:text-red-500'
+                        }`}
+                      >
+                        <Heart className={`h-3 w-3 ${comment.isLiked ? 'fill-current' : ''}`} />
+                        <span className="text-xs">{comment.likes}</span>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </CardContent>
