@@ -166,7 +166,7 @@ const Explore = () => {
 
   return (
     <Layout>
-      <div className="max-w-6xl mx-auto pt-4">
+      <div className="max-w-6xl mx-auto pt-4 pl-4 md:pl-0">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-2">Explore</h1>

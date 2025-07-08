@@ -24,7 +24,7 @@ const Layout = ({ children }: LayoutProps) => {
         <Navbar />
         <div className="flex w-full">
           <Sidebar />
-          <main className="flex-1 bg-background min-h-[calc(100vh-4rem)]">
+          <main className="flex-1 bg-background min-h-[calc(100vh-4rem)] overflow-x-hidden">
             <div className={`${isMobile ? 'p-4' : 'p-6'} w-full`}>
               {children}
             </div>
