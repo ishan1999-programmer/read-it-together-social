@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Home, Compass, Search, User, Settings } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Home, Compass, Search, User, Settings, LogOut } from 'lucide-react';
 import { 
   Sidebar as SidebarComponent,
   SidebarContent,
@@ -11,9 +11,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarTrigger,
-  useSidebar
+  useSidebar,
+  SidebarFooter
 } from '@/components/ui/sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Button } from '@/components/ui/button';
 
 const navigationItems = [
   { title: 'Home', url: '/', icon: Home },
@@ -25,10 +27,16 @@ const navigationItems = [
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { state } = useSidebar();
   const isMobile = useIsMobile();
 
   const isActive = (url: string) => location.pathname === url;
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
 
   return (
     <SidebarComponent 
@@ -74,6 +82,25 @@ const Sidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      
+      <SidebarFooter className="p-4">
+        <Button
+          variant="ghost"
+          onClick={handleLogout}
+          className={`flex items-center justify-start ${
+            isMobile ? 'space-x-3 p-3' : 'space-x-5 p-5'
+          } w-full rounded-lg transition-colors text-sidebar-foreground hover:bg-sidebar-accent ${
+            isMobile ? 'text-lg' : 'text-xl'
+          }`}
+        >
+          <LogOut className={`${isMobile ? 'h-6 w-6' : 'h-8 w-8'}`} />
+          {state !== "collapsed" && (
+            <span className={isMobile ? 'text-lg' : 'text-xl'}>
+              Logout
+            </span>
+          )}
+        </Button>
+      </SidebarFooter>
     </SidebarComponent>
   );
 };

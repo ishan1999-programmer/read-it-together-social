@@ -1,127 +1,107 @@
 
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { BookOpen, Plus, User, Menu } from 'lucide-react';
+import React from 'react';
 import { Link } from 'react-router-dom';
+import { BookOpen, Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import NotificationDropdown from './NotificationDropdown';
-import { useSidebar } from '@/components/ui/sidebar';
+import ProfileDropdown from './ProfileDropdown';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const Navbar = () => {
-  const { toggleSidebar } = useSidebar();
   const isMobile = useIsMobile();
-  
-  // Mock notifications data
-  const [notifications, setNotifications] = useState([
+
+  // Mock data for notifications (only post-related)
+  const postNotifications = [
     {
       id: 1,
       type: 'like' as const,
       user: {
-        name: 'Alex Chen',
-        username: 'scifi_alex',
-        avatar: null
+        name: 'Sarah Johnson',
+        username: 'sarahj',
+        avatar: null,
       },
-      message: 'liked your review of "The Seven Husbands of Evelyn Hugo"',
-      timestamp: '2 minutes ago',
+      message: 'liked your post',
+      timestamp: '2 hours ago',
       isRead: false,
       postId: 1,
-      postTitle: 'The Seven Husbands of Evelyn Hugo'
+      postTitle: 'The Great Gatsby',
     },
     {
       id: 2,
       type: 'comment' as const,
       user: {
-        name: 'Sophie Martinez',
-        username: 'romance_sophie',
-        avatar: null
+        name: 'Mike Chen',
+        username: 'mikechen',
+        avatar: null,
       },
       message: 'commented on your post',
+      timestamp: '5 hours ago',
+      isRead: true,
+      postId: 2,
+      postTitle: 'To Kill a Mockingbird',
+    },
+  ];
+
+  // Mock data for follow requests
+  const followRequests = [
+    {
+      id: 1,
+      user: {
+        name: 'Alex Rodriguez',
+        username: 'alexr',
+        avatar: null,
+      },
       timestamp: '1 hour ago',
-      isRead: false,
-      postId: 1,
-      postTitle: 'Project Hail Mary'
     },
     {
-      id: 3,
-      type: 'follow_request' as const,
+      id: 2,
       user: {
-        name: 'Literary Luna',
-        username: 'literary_luna',
-        avatar: null
+        name: 'Emma Wilson',
+        username: 'emmaw',
+        avatar: null,
       },
-      message: 'wants to follow you',
       timestamp: '3 hours ago',
-      isRead: true
-    }
-  ]);
+    },
+  ];
 
   const handleMarkAsRead = (notificationId: number) => {
-    setNotifications(prev =>
-      prev.map(n => n.id === notificationId ? { ...n, isRead: true } : n)
-    );
+    console.log('Mark notification as read:', notificationId);
   };
 
-  const handleAcceptFollowRequest = (notificationId: number, userId: string) => {
-    console.log(`Accepting follow request from ${userId}`);
-    setNotifications(prev => prev.filter(n => n.id !== notificationId));
+  const handleAcceptFollowRequest = (requestId: number, userId: string) => {
+    console.log('Accept follow request:', requestId, userId);
   };
 
-  const handleRejectFollowRequest = (notificationId: number, userId: string) => {
-    console.log(`Rejecting follow request from ${userId}`);
-    setNotifications(prev => prev.filter(n => n.id !== notificationId));
+  const handleRejectFollowRequest = (requestId: number, userId: string) => {
+    console.log('Reject follow request:', requestId, userId);
   };
 
   return (
-    <nav className="bg-card border-b border-border px-4 py-3 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        {/* Left Side - Menu & Logo */}
-        <div className="flex items-center space-x-4">
-          {isMobile && (
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={toggleSidebar}
-              className="hover:bg-accent"
-            >
-              <Menu className="h-6 w-6 text-primary" />
-            </Button>
-          )}
-          
-          <Link to="/" className="flex items-center space-x-2">
-            <BookOpen className={`${isMobile ? 'h-8 w-8' : 'h-12 w-12'} text-primary`} />
-            <span className={`${isMobile ? 'text-xl' : 'text-3xl'} font-bold text-primary`}>
-              BookMates
-            </span>
-          </Link>
-        </div>
+    <nav className="bg-background border-b border-border h-16 flex items-center justify-between px-4 lg:px-6 sticky top-0 z-40">
+      <Link to="/" className="flex items-center space-x-2">
+        <BookOpen className={`${isMobile ? 'h-6 w-6' : 'h-8 w-8'} text-primary`} />
+        <span className={`font-bold ${isMobile ? 'text-lg' : 'text-xl'} text-primary`}>
+          BookShare
+        </span>
+      </Link>
 
-        {/* Right Side Actions */}
-        <div className="flex items-center space-x-2 md:space-x-4">
-          <Button 
-            asChild 
-            className={`bg-primary hover:bg-primary/90 text-primary-foreground ${
-              isMobile ? 'text-sm px-3 py-2' : 'text-lg px-6 py-3'
-            }`}
-          >
-            <Link to="/add-book" className="flex items-center space-x-2">
-              <Plus className={`${isMobile ? 'h-4 w-4' : 'h-6 w-6'}`} />
-              {!isMobile && <span>Create Post</span>}
-            </Link>
-          </Button>
-          
-          <NotificationDropdown
-            notifications={notifications}
-            onMarkAsRead={handleMarkAsRead}
-            onAcceptFollowRequest={handleAcceptFollowRequest}
-            onRejectFollowRequest={handleRejectFollowRequest}
-          />
-          
-          <Button variant="ghost" size="icon" asChild className="hover:bg-accent p-3">
-            <Link to="/profile">
-              <User className={`${isMobile ? 'h-6 w-6' : 'h-8 w-8'} text-primary`} />
-            </Link>
-          </Button>
-        </div>
+      <div className="flex items-center space-x-2">
+        <Button asChild variant="ghost" size="icon" className="hover:bg-accent p-3">
+          <Link to="/add-book">
+            <Plus className={`${isMobile ? 'h-6 w-6' : 'h-8 w-8'} text-primary`} />
+          </Link>
+        </Button>
+        
+        <NotificationDropdown 
+          notifications={postNotifications}
+          onMarkAsRead={handleMarkAsRead}
+        />
+        
+        <ProfileDropdown 
+          followRequests={followRequests}
+          onAcceptFollowRequest={handleAcceptFollowRequest}
+          onRejectFollowRequest={handleRejectFollowRequest}
+        />
       </div>
     </nav>
   );

@@ -1,15 +1,16 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Bell, Heart, MessageCircle, UserPlus, Check, X } from 'lucide-react';
+import { Bell, Heart, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Notification {
   id: number;
-  type: 'like' | 'comment' | 'follow_request';
+  type: 'like' | 'comment';
   user: {
     name: string;
     username: string;
@@ -25,15 +26,11 @@ interface Notification {
 interface NotificationDropdownProps {
   notifications: Notification[];
   onMarkAsRead: (notificationId: number) => void;
-  onAcceptFollowRequest: (notificationId: number, userId: string) => void;
-  onRejectFollowRequest: (notificationId: number, userId: string) => void;
 }
 
 const NotificationDropdown = ({ 
   notifications, 
-  onMarkAsRead, 
-  onAcceptFollowRequest, 
-  onRejectFollowRequest 
+  onMarkAsRead
 }: NotificationDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const isMobile = useIsMobile();
@@ -45,8 +42,6 @@ const NotificationDropdown = ({
         return <Heart className="h-4 w-4 text-red-500" />;
       case 'comment':
         return <MessageCircle className="h-4 w-4 text-blue-500" />;
-      case 'follow_request':
-        return <UserPlus className="h-4 w-4 text-green-500" />;
       default:
         return <Bell className="h-4 w-4" />;
     }
@@ -142,34 +137,6 @@ const NotificationDropdown = ({
                           <p className="text-xs text-muted-foreground mt-1">
                             {notification.timestamp}
                           </p>
-
-                          {notification.type === 'follow_request' && (
-                            <div className="flex space-x-2 mt-2">
-                              <Button
-                                size="sm"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onAcceptFollowRequest(notification.id, notification.user.username);
-                                }}
-                                className="h-7 px-3"
-                              >
-                                <Check className="h-3 w-3 mr-1" />
-                                Accept
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onRejectFollowRequest(notification.id, notification.user.username);
-                                }}
-                                className="h-7 px-3"
-                              >
-                                <X className="h-3 w-3 mr-1" />
-                                Decline
-                              </Button>
-                            </div>
-                          )}
                         </div>
                         
                         {!notification.isRead && (
