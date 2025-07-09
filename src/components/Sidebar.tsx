@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, Compass, Search, User, Settings, LogOut } from 'lucide-react';
+import { Home, Compass, Search, User, Settings, LogOut, BookOpen } from 'lucide-react';
 import { 
   Sidebar as SidebarComponent,
   SidebarContent,
@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button';
 
 const navigationItems = [
   { title: 'Home', url: '/', icon: Home },
+  { title: 'My Feed', url: '/', icon: BookOpen },
   { title: 'Explore', url: '/explore', icon: Compass },
   { title: 'Search', url: '/search', icon: Search },
   { title: 'Profile', url: '/profile', icon: User },
