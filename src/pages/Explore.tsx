@@ -3,297 +3,453 @@ import React, { useState } from 'react';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import BookPost from '@/components/BookPost';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { 
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
 import { 
   TrendingUp, 
   Star, 
-  Filter, 
-  Users, 
-  BookOpen,
-  Search,
-  UserPlus
+  Heart, 
+  MessageCircle,
+  Clock,
+  UserPlus,
+  ChevronRight
 } from 'lucide-react';
 
-// Mock trending books data
-const mockTrendingBooks = [
+// Mock data for trending books
+const trendingBooks = [
   {
-    id: 6,
-    user: {
-      name: 'Alex Chen',
-      username: 'scifi_alex',
-      avatar: null
-    },
-    book: {
-      title: 'Project Hail Mary',
-      author: 'Andy Weir',
-      genre: 'Science Fiction',
-      cover: null,
-      rating: 5,
-      status: 'Read'
-    },
-    review: 'An absolutely brilliant sci-fi adventure! Weir combines humor, science, and heart in the most unexpected ways. Had me laughing and crying at the same time.',
-    likes: 156,
-    comments: 42,
-    timestamp: '1 day ago',
-    isLiked: false
+    id: 1,
+    title: 'Project Hail Mary',
+    author: 'Andy Weir',
+    cover: null,
+    likes: 245,
+    user: { name: 'Alex Chen', avatar: null },
+    genre: 'Science Fiction'
   },
   {
-    id: 7,
-    user: {
-      name: 'Sophie Martinez',
-      username: 'romance_sophie',
-      avatar: null
-    },
-    book: {
-      title: 'Beach Read',
-      author: 'Emily Henry',
-      genre: 'Contemporary Romance',
-      cover: null,
-      rating: 4,
-      status: 'Read'
-    },
-    review: 'Perfect summer read! Emily Henry has such a gift for writing realistic characters and emotions. The enemies-to-lovers trope done perfectly.',
-    likes: 98,
-    comments: 28,
-    timestamp: '2 days ago',
-    isLiked: true
+    id: 2,
+    title: 'The Seven Husbands of Evelyn Hugo',
+    author: 'Taylor Jenkins Reid',
+    cover: null,
+    likes: 189,
+    user: { name: 'Sophie Martinez', avatar: null },
+    genre: 'Historical Fiction'
+  },
+  {
+    id: 3,
+    title: 'Klara and the Sun',
+    author: 'Kazuo Ishiguro',
+    cover: null,
+    likes: 156,
+    user: { name: 'Literary Luna', avatar: null },
+    genre: 'Literary Fiction'
   }
 ];
 
-// Mock new and noteworthy books
-const mockNewBooks = [
+// Mock data for recently shared
+const recentlyShared = [
+  {
+    id: 4,
+    title: 'The Thursday Murder Club',
+    author: 'Richard Osman',
+    cover: null,
+    timeAgo: '2 minutes ago',
+    user: { name: 'Mystery Mike', avatar: null }
+  },
+  {
+    id: 5,
+    title: 'Educated',
+    author: 'Tara Westover',
+    cover: null,
+    timeAgo: '15 minutes ago',
+    user: { name: 'Book Lover', avatar: null }
+  },
+  {
+    id: 6,
+    title: 'The Midnight Library',
+    author: 'Matt Haig',
+    cover: null,
+    timeAgo: '1 hour ago',
+    user: { name: 'Philosophy Phil', avatar: null }
+  }
+];
+
+// Mock data for top rated
+const topRated = [
+  {
+    id: 7,
+    title: 'The Invisible Life of Addie LaRue',
+    author: 'V.E. Schwab',
+    cover: null,
+    rating: 4.8,
+    reviews: 342
+  },
   {
     id: 8,
-    user: {
-      name: 'David Kim',
-      username: 'thriller_david',
-      avatar: null
-    },
-    book: {
-      title: 'The Seven Husbands of Evelyn Hugo',
-      author: 'Taylor Jenkins Reid',
-      genre: 'Historical Fiction',
-      cover: null,
-      rating: 5,
-      status: 'Currently Reading'
-    },
-    review: 'Just started this and already completely hooked! The storytelling is incredible and Evelyn is such a fascinating character.',
-    likes: 67,
-    comments: 19,
-    timestamp: '3 hours ago',
-    isLiked: false
+    title: 'Circe',
+    author: 'Madeline Miller',
+    cover: null,
+    rating: 4.7,
+    reviews: 289
   }
 ];
 
-// Mock suggested users
-const mockSuggestedUsers = [
+// Mock data for people to follow
+const peopleToFollow = [
   {
     id: 1,
     name: 'Literary Luna',
     username: 'literary_luna',
     avatar: null,
-    genres: ['Literary Fiction', 'Poetry', 'Essays'],
-    followers: 1234,
+    genres: ['Literary Fiction', 'Poetry'],
+    mutualGenres: 2,
     isFollowing: false
   },
   {
     id: 2,
-    name: 'Mystery Mike',
-    username: 'mystery_mike',
+    name: 'Fantasy Finn',
+    username: 'fantasy_finn',
     avatar: null,
-    genres: ['Mystery', 'Thriller', 'Crime'],
-    followers: 892,
+    genres: ['Fantasy', 'Sci-Fi'],
+    mutualGenres: 1,
     isFollowing: false
   },
   {
     id: 3,
-    name: 'Fantasy Finn',
-    username: 'fantasy_finn',
+    name: 'Romance Reader',
+    username: 'romance_reader',
     avatar: null,
-    genres: ['Fantasy', 'Sci-Fi', 'Adventure'],
-    followers: 567,
+    genres: ['Romance', 'Contemporary'],
+    mutualGenres: 1,
     isFollowing: true
   }
 ];
 
-const genres = ['All', 'Fiction', 'Non-Fiction', 'Mystery', 'Romance', 'Sci-Fi', 'Fantasy', 'Biography', 'History'];
-const sortOptions = ['Newest', 'Most Liked', 'Most Commented', 'Highest Rated'];
+const genres = ['All', 'Fiction', 'Mystery', 'Romance', 'Sci-Fi', 'Fantasy', 'Biography', 'History'];
+
+const genreColors = {
+  'Fiction': 'bg-blue-100 text-blue-800',
+  'Mystery': 'bg-purple-100 text-purple-800',
+  'Romance': 'bg-pink-100 text-pink-800',
+  'Sci-Fi': 'bg-green-100 text-green-800',
+  'Fantasy': 'bg-indigo-100 text-indigo-800',
+  'Biography': 'bg-yellow-100 text-yellow-800',
+  'History': 'bg-orange-100 text-orange-800',
+  'default': 'bg-gray-100 text-gray-800'
+};
 
 const Explore = () => {
   const [selectedGenre, setSelectedGenre] = useState('All');
-  const [sortBy, setSortBy] = useState('Newest');
-  const [trendingPosts, setTrendingPosts] = useState(mockTrendingBooks);
-  const [newPosts, setNewPosts] = useState(mockNewBooks);
-  const [suggestedUsers, setSuggestedUsers] = useState(mockSuggestedUsers);
-
-  const handleLike = (postId: number) => {
-    setTrendingPosts(prevPosts => 
-      prevPosts.map(post => 
-        post.id === postId 
-          ? { 
-              ...post, 
-              isLiked: !post.isLiked,
-              likes: post.isLiked ? post.likes - 1 : post.likes + 1
-            }
-          : post
-      )
-    );
-    
-    setNewPosts(prevPosts => 
-      prevPosts.map(post => 
-        post.id === postId 
-          ? { 
-              ...post, 
-              isLiked: !post.isLiked,
-              likes: post.isLiked ? post.likes - 1 : post.likes + 1
-            }
-          : post
-      )
-    );
-  };
+  const [followingUsers, setFollowingUsers] = useState(new Set([3]));
 
   const handleFollowUser = (userId: number) => {
-    setSuggestedUsers(prevUsers =>
-      prevUsers.map(user =>
-        user.id === userId
-          ? { ...user, isFollowing: !user.isFollowing }
-          : user
-      )
-    );
+    setFollowingUsers(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(userId)) {
+        newSet.delete(userId);
+      } else {
+        newSet.add(userId);
+      }
+      return newSet;
+    });
+  };
+
+  const getGenreColor = (genre: string) => {
+    return genreColors[genre as keyof typeof genreColors] || genreColors.default;
   };
 
   return (
     <Layout>
-      <div className="max-w-6xl mx-auto pt-4 pl-4 md:pl-0">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Explore</h1>
-          <p className="text-muted-foreground text-lg">Discover new books and connect with fellow readers</p>
-        </div>
-
-        {/* Filters */}
-        <div className="bg-card rounded-xl border border-border p-6 mb-8">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <h3 className="font-semibold mb-3 flex items-center gap-2">
-                <Filter className="h-5 w-5" />
-                Filter by Genre
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {genres.map(genre => (
-                  <Button
-                    key={genre}
-                    size="sm"
-                    variant={selectedGenre === genre ? "default" : "outline"}
-                    onClick={() => setSelectedGenre(genre)}
-                    className={selectedGenre === genre ? "bg-primary hover:bg-primary/90" : ""}
-                  >
-                    {genre}
-                  </Button>
-                ))}
-              </div>
-            </div>
-            
-            <div className="md:w-48">
-              <h3 className="font-semibold mb-3">Sort by</h3>
-              <select 
-                value={sortBy} 
-                onChange={(e) => setSortBy(e.target.value)}
-                className="w-full p-2 border border-border rounded-md bg-background"
-              >
-                {sortOptions.map(option => (
-                  <option key={option} value={option}>{option}</option>
-                ))}
-              </select>
-            </div>
+      <div className="max-w-7xl mx-auto space-y-12">
+        
+        {/* Trending Books Carousel */}
+        <section>
+          <div className="flex items-center gap-3 mb-6">
+            <TrendingUp className="h-6 w-6 text-primary" />
+            <h2 className="text-3xl font-bold text-foreground">Trending Books</h2>
           </div>
-        </div>
+          
+          <Carousel className="w-full">
+            <CarouselContent className="-ml-2 md:-ml-4">
+              {trendingBooks.map((book) => (
+                <CarouselItem key={book.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
+                  <Card className="h-full hover:shadow-lg transition-all duration-300 cursor-pointer group">
+                    <CardContent className="p-6">
+                      <div className="flex gap-4">
+                        <div className="w-20 h-28 bg-muted rounded-lg flex items-center justify-center flex-shrink-0">
+                          <span className="text-muted-foreground text-xs text-center px-2">Book Cover</span>
+                        </div>
+                        <div className="flex-1 space-y-3">
+                          <div>
+                            <h3 className="font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                              {book.title}
+                            </h3>
+                            <p className="text-sm text-muted-foreground">by {book.author}</p>
+                          </div>
+                          
+                          <Badge className={getGenreColor(book.genre)}>
+                            {book.genre}
+                          </Badge>
+                          
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <Avatar className="w-5 h-5">
+                                <AvatarFallback className="text-xs">
+                                  {book.user.name.split(' ').map(n => n[0]).join('')}
+                                </AvatarFallback>
+                              </Avatar>
+                              <span>{book.user.name}</span>
+                            </div>
+                            
+                            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                              <Heart className="h-4 w-4" />
+                              <span>{book.likes}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
+        </section>
 
-        <Tabs defaultValue="trending" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8">
-            <TabsTrigger value="trending" className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" />
-              Trending
-            </TabsTrigger>
-            <TabsTrigger value="new" className="flex items-center gap-2">
-              <Star className="h-4 w-4" />
-              New & Noteworthy
-            </TabsTrigger>
-            <TabsTrigger value="users" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              Discover Users
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="trending" className="space-y-6">
-            <div className="flex items-center gap-2 mb-4">
-              <TrendingUp className="h-5 w-5 text-primary" />
-              <h2 className="text-2xl font-bold">Trending Books</h2>
-            </div>
-            {trendingPosts.map(post => (
-              <BookPost key={post.id} post={post} onLike={handleLike} />
-            ))}
-          </TabsContent>
-
-          <TabsContent value="new" className="space-y-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Star className="h-5 w-5 text-primary" />
-              <h2 className="text-2xl font-bold">New & Noteworthy</h2>
-            </div>
-            {newPosts.map(post => (
-              <BookPost key={post.id} post={post} onLike={handleLike} />
-            ))}
-          </TabsContent>
-
-          <TabsContent value="users" className="space-y-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Users className="h-5 w-5 text-primary" />
-              <h2 className="text-2xl font-bold">Suggested Users</h2>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {suggestedUsers.map(user => (
-                <div key={user.id} className="bg-card rounded-lg border border-border p-6">
-                  <div className="flex flex-col items-center text-center">
-                    <Avatar className="w-20 h-20 mb-4">
-                      <AvatarImage src={user.avatar || ''} />
-                      <AvatarFallback className="text-xl font-bold bg-primary/10 text-primary">
-                        {user.name.split(' ').map(n => n[0]).join('')}
-                      </AvatarFallback>
-                    </Avatar>
-                    
-                    <h3 className="font-bold text-lg mb-1">{user.name}</h3>
-                    <p className="text-muted-foreground mb-3">@{user.username}</p>
-                    
-                    <div className="flex flex-wrap gap-1 mb-4 justify-center">
-                      {user.genres.slice(0, 2).map(genre => (
-                        <Badge key={genre} variant="secondary" className="bg-accent/50 text-xs">
-                          {genre}
-                        </Badge>
-                      ))}
+        {/* Recently Shared */}
+        <section>
+          <div className="flex items-center gap-3 mb-6">
+            <Clock className="h-6 w-6 text-primary" />
+            <h2 className="text-3xl font-bold text-foreground">Recently Shared</h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {recentlyShared.map((book) => (
+              <Card key={book.id} className="hover:shadow-md transition-shadow cursor-pointer group">
+                <CardContent className="p-4">
+                  <div className="flex gap-3">
+                    <div className="w-12 h-16 bg-muted rounded flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs text-muted-foreground">Cover</span>
                     </div>
-                    
-                    <p className="text-sm text-muted-foreground mb-4">
-                      {user.followers} followers
-                    </p>
-                    
-                    <Button
-                      onClick={() => handleFollowUser(user.id)}
-                      variant={user.isFollowing ? "outline" : "default"}
-                      className={user.isFollowing ? "" : "bg-primary hover:bg-primary/90"}
-                      size="sm"
-                    >
-                      <UserPlus className="h-4 w-4 mr-2" />
-                      {user.isFollowing ? 'Following' : 'Follow'}
-                    </Button>
+                    <div className="flex-1 space-y-2">
+                      <h4 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-1">
+                        {book.title}
+                      </h4>
+                      <p className="text-sm text-muted-foreground">by {book.author}</p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground">{book.timeAgo}</span>
+                        <span className="text-xs text-muted-foreground">by {book.user.name}</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        {/* Top Rated This Week */}
+        <section>
+          <div className="flex items-center gap-3 mb-6">
+            <Star className="h-6 w-6 text-yellow-500 fill-current" />
+            <h2 className="text-3xl font-bold text-foreground">Top Rated This Week</h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {topRated.map((book) => (
+              <Card key={book.id} className="bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200 hover:shadow-lg transition-all duration-300 cursor-pointer">
+                <CardContent className="p-6">
+                  <div className="flex gap-4">
+                    <div className="w-24 h-32 bg-muted rounded-lg flex items-center justify-center flex-shrink-0">
+                      <span className="text-muted-foreground text-xs text-center px-2">Book Cover</span>
+                    </div>
+                    <div className="flex-1 space-y-3">
+                      <div>
+                        <h3 className="font-bold text-foreground text-lg">{book.title}</h3>
+                        <p className="text-muted-foreground">by {book.author}</p>
+                      </div>
+                      
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center">
+                          {[...Array(5)].map((_, i) => (
+                            <Star 
+                              key={i} 
+                              className={`h-4 w-4 ${i < Math.floor(book.rating) ? 'text-yellow-500 fill-current' : 'text-gray-300'}`} 
+                            />
+                          ))}
+                        </div>
+                        <span className="font-semibold text-foreground">{book.rating}</span>
+                        <span className="text-sm text-muted-foreground">({book.reviews} reviews)</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        {/* Books by Genre */}
+        <section>
+          <h2 className="text-3xl font-bold text-foreground mb-6">Books by Genre</h2>
+          
+          <div className="flex flex-wrap gap-2 mb-6">
+            {genres.map((genre) => (
+              <Button
+                key={genre}
+                variant={selectedGenre === genre ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedGenre(genre)}
+                className="rounded-full"
+              >
+                {genre}
+              </Button>
+            ))}
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {trendingBooks.map((book) => (
+              <Card key={`genre-${book.id}`} className="hover:shadow-md hover:scale-105 transition-all duration-300 cursor-pointer">
+                <CardContent className="p-3">
+                  <div className="w-full h-32 bg-muted rounded mb-3 flex items-center justify-center">
+                    <span className="text-xs text-muted-foreground text-center px-2">Cover</span>
+                  </div>
+                  <h4 className="font-semibold text-sm text-foreground line-clamp-2 mb-1">{book.title}</h4>
+                  <p className="text-xs text-muted-foreground mb-2">{book.author}</p>
+                  <Badge size="sm" className={getGenreColor(book.genre)}>
+                    {book.genre}
+                  </Badge>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        {/* People to Follow */}
+        <section>
+          <div className="flex items-center gap-3 mb-6">
+            <UserPlus className="h-6 w-6 text-primary" />
+            <h2 className="text-3xl font-bold text-foreground">People to Follow</h2>
+          </div>
+          
+          <Carousel className="w-full">
+            <CarouselContent className="-ml-2 md:-ml-4">
+              {peopleToFollow.map((user) => (
+                <CarouselItem key={user.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
+                  <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                    <CardContent className="p-6 text-center">
+                      <Avatar className="w-16 h-16 mx-auto mb-4">
+                        <AvatarFallback className="text-lg font-bold bg-primary/10 text-primary">
+                          {user.name.split(' ').map(n => n[0]).join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                      
+                      <h3 className="font-bold text-foreground mb-1">{user.name}</h3>
+                      <p className="text-sm text-muted-foreground mb-3">@{user.username}</p>
+                      
+                      <div className="flex flex-wrap gap-1 justify-center mb-4">
+                        {user.genres.map((genre) => (
+                          <Badge key={genre} variant="secondary" className="text-xs">
+                            {genre}
+                          </Badge>
+                        ))}
+                      </div>
+                      
+                      <p className="text-xs text-muted-foreground mb-4">
+                        {user.mutualGenres} mutual genres
+                      </p>
+                      
+                      <Button
+                        onClick={() => handleFollowUser(user.id)}
+                        variant={followingUsers.has(user.id) ? "outline" : "default"}
+                        size="sm"
+                        className="w-full"
+                      >
+                        {followingUsers.has(user.id) ? 'Following' : 'Follow'}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
+        </section>
+
+        {/* Weekly Highlights */}
+        <section>
+          <h2 className="text-3xl font-bold text-foreground mb-6">Weekly Highlights</h2>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-blue-600" />
+                  Most Liked Post
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex gap-4">
+                  <div className="w-16 h-20 bg-muted rounded flex items-center justify-center flex-shrink-0">
+                    <span className="text-xs text-muted-foreground">Cover</span>
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-foreground mb-1">Project Hail Mary</h4>
+                    <p className="text-sm text-muted-foreground mb-2">by Andy Weir</p>
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <Heart className="h-4 w-4" />
+                        <span>245 likes</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <MessageCircle className="h-4 w-4" />
+                        <span>89 comments</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          </TabsContent>
-        </Tabs>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Star className="h-5 w-5 text-green-600" />
+                  Highest Rated
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex gap-4">
+                  <div className="w-16 h-20 bg-muted rounded flex items-center justify-center flex-shrink-0">
+                    <span className="text-xs text-muted-foreground">Cover</span>
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-foreground mb-1">The Invisible Life of Addie LaRue</h4>
+                    <p className="text-sm text-muted-foreground mb-2">by V.E. Schwab</p>
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className="h-3 w-3 text-yellow-500 fill-current" />
+                        ))}
+                      </div>
+                      <span className="text-sm font-semibold text-foreground">4.8</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
       </div>
     </Layout>
   );
