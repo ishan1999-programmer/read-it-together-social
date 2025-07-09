@@ -9,83 +9,83 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 9%;
+    --background: 39 100% 97%; /* warm cream/beige background */
+    --foreground: 25 25% 15%; /* dark brown text */
 
-    --card: 0 0% 98%;
-    --card-foreground: 0 0% 9%;
+    --card: 39 50% 95%; /* slightly warmer card background */
+    --card-foreground: 25 25% 15%; /* dark brown text */
 
-    --popover: 0 0% 98%;
-    --popover-foreground: 0 0% 9%;
+    --popover: 39 50% 95%;
+    --popover-foreground: 25 25% 15%;
 
-    --primary: 0 0% 15%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 25 85% 35%; /* warm brown primary */
+    --primary-foreground: 39 100% 97%; /* cream text on primary */
 
-    --secondary: 0 0% 95%;
-    --secondary-foreground: 0 0% 15%;
+    --secondary: 39 35% 88%; /* light tan secondary */
+    --secondary-foreground: 25 25% 15%; /* dark brown text */
 
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 39 25% 90%; /* muted tan */
+    --muted-foreground: 25 15% 45%; /* medium brown */
 
-    --accent: 0 0% 90%;
-    --accent-foreground: 0 0% 15%;
+    --accent: 39 45% 85%; /* warm accent */
+    --accent-foreground: 25 25% 15%; /* dark brown text */
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive-foreground: 39 100% 97%;
 
-    --border: 0 0% 89%;
-    --input: 0 0% 89%;
-    --ring: 0 0% 15%;
+    --border: 39 25% 82%; /* tan border */
+    --input: 39 25% 82%; /* tan input background */
+    --ring: 25 85% 35%; /* brown focus ring */
 
     --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 0 0% 9%;
-    --sidebar-primary: 0 0% 15%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 0 0% 93%;
-    --sidebar-accent-foreground: 0 0% 15%;
-    --sidebar-border: 0 0% 89%;
-    --sidebar-ring: 0 0% 15%;
+    --sidebar-background: 39 50% 95%;
+    --sidebar-foreground: 25 25% 15%;
+    --sidebar-primary: 25 85% 35%;
+    --sidebar-primary-foreground: 39 100% 97%;
+    --sidebar-accent: 39 35% 88%;
+    --sidebar-accent-foreground: 25 25% 15%;
+    --sidebar-border: 39 25% 82%;
+    --sidebar-ring: 25 85% 35%;
   }
 
   .dark {
-    --background: 0 0% 9%;
-    --foreground: 0 0% 98%;
+    --background: 25 15% 8%; /* dark brown background */
+    --foreground: 39 40% 92%; /* warm off-white text */
 
-    --card: 0 0% 11%;
-    --card-foreground: 0 0% 98%;
+    --card: 25 15% 10%; /* slightly lighter card */
+    --card-foreground: 39 40% 92%;
 
-    --popover: 0 0% 11%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 25 15% 10%;
+    --popover-foreground: 39 40% 92%;
 
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
+    --primary: 39 65% 65%; /* warm tan primary for dark mode */
+    --primary-foreground: 25 15% 8%;
 
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 25 15% 15%; /* dark brown secondary */
+    --secondary-foreground: 39 40% 92%;
 
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 63%;
+    --muted: 25 15% 15%;
+    --muted-foreground: 39 20% 63%;
 
-    --accent: 0 0% 15%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 25 15% 15%;
+    --accent-foreground: 39 40% 92%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive-foreground: 39 40% 92%;
 
-    --border: 0 0% 15%;
-    --input: 0 0% 15%;
-    --ring: 0 0% 83%;
+    --border: 25 15% 18%; /* dark brown border */
+    --input: 25 15% 18%;
+    --ring: 39 65% 65%; /* warm tan focus ring */
     
-    --sidebar-background: 0 0% 9%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 0 0% 98%;
-    --sidebar-primary-foreground: 0 0% 9%;
-    --sidebar-accent: 0 0% 15%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 0 0% 15%;
-    --sidebar-ring: 0 0% 83%;
+    --sidebar-background: 25 15% 8%;
+    --sidebar-foreground: 39 40% 92%;
+    --sidebar-primary: 39 65% 65%;
+    --sidebar-primary-foreground: 25 15% 8%;
+    --sidebar-accent: 25 15% 15%;
+    --sidebar-accent-foreground: 39 40% 92%;
+    --sidebar-border: 25 15% 18%;
+    --sidebar-ring: 39 65% 65%;
   }
 }
 
@@ -96,6 +96,7 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Georgia', 'Times New Roman', serif; /* Classic book-reading font */
   }
 }
 

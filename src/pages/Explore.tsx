@@ -325,7 +325,7 @@ const Explore = () => {
                   </div>
                   <h4 className="font-semibold text-sm text-foreground line-clamp-2 mb-1">{book.title}</h4>
                   <p className="text-xs text-muted-foreground mb-2">{book.author}</p>
-                  <Badge size="sm" className={getGenreColor(book.genre)}>
+                  <Badge className={getGenreColor(book.genre)}>
                     {book.genre}
                   </Badge>
                 </CardContent>
