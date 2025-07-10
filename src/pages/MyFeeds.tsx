@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -12,7 +11,10 @@ import {
   Search, 
   Star,
   Calendar,
-  FileText
+  FileText,
+  Edit,
+  Check,
+  X
 } from 'lucide-react';
 
 interface Book {
@@ -36,6 +38,8 @@ const MyFeeds = () => {
   const [books, setBooks] = useState<Book[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
+  const [editingPageId, setEditingPageId] = useState<string | null>(null);
+  const [tempPageNumber, setTempPageNumber] = useState<number>(0);
 
   useEffect(() => {
     // Load books from localStorage
@@ -81,18 +85,6 @@ const MyFeeds = () => {
     localStorage.setItem('myFeedsBooks', JSON.stringify(updatedBooks));
   };
 
-  const updateCurrentPage = (bookId: string, currentPage: number) => {
-    const updatedBooks = books.map(book => {
-      if (book.id === bookId) {
-        return { ...book, currentPage };
-      }
-      return book;
-    });
-    
-    setBooks(updatedBooks);
-    localStorage.setItem('myFeedsBooks', JSON.stringify(updatedBooks));
-  };
-
   const formatAuthors = (authors: string[]) => {
     if (!authors || authors.length === 0) return 'Unknown Author';
     return authors.join(', ');
@@ -114,6 +106,35 @@ const MyFeeds = () => {
   const calculateProgress = (currentPage: number, totalPages: number) => {
     if (!totalPages || totalPages === 0) return 0;
     return Math.min((currentPage / totalPages) * 100, 100);
+  };
+
+  const startEditingPage = (bookId: string, currentPage: number) => {
+    setEditingPageId(bookId);
+    setTempPageNumber(currentPage);
+  };
+
+  const savePageNumber = (bookId: string) => {
+    if (tempPageNumber > 0) {
+      updateCurrentPage(bookId, tempPageNumber);
+    }
+    setEditingPageId(null);
+  };
+
+  const cancelEditingPage = () => {
+    setEditingPageId(null);
+    setTempPageNumber(0);
+  };
+
+  const updateCurrentPage = (bookId: string, currentPage: number) => {
+    const updatedBooks = books.map(book => {
+      if (book.id === bookId) {
+        return { ...book, currentPage };
+      }
+      return book;
+    });
+    
+    setBooks(updatedBooks);
+    localStorage.setItem('myFeedsBooks', JSON.stringify(updatedBooks));
   };
 
   const renderBookCard = (book: Book, showStatusControls = true) => (
@@ -164,16 +185,57 @@ const MyFeeds = () => {
                   <Progress value={calculateProgress(book.currentPage || 1, book.pageCount)} />
                   
                   <div className="flex items-center gap-2 mt-2">
-                    <Input
-                      type="number"
-                      placeholder="Current page"
-                      min="1"
-                      max={book.pageCount}
-                      value={book.currentPage || 1}
-                      onChange={(e) => updateCurrentPage(book.id, parseInt(e.target.value) || 1)}
-                      className="w-24 h-8 text-xs"
-                    />
-                    <span className="text-xs text-muted-foreground">/ {book.pageCount}</span>
+                    {editingPageId === book.id ? (
+                      <div className="flex items-center gap-2 w-full">
+                        <Input
+                          type="text"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
+                          placeholder="Page number"
+                          min="1"
+                          max={book.pageCount}
+                          value={tempPageNumber}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, '');
+                            setTempPageNumber(parseInt(value) || 0);
+                          }}
+                          className="w-24 h-8 text-xs [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          autoFocus
+                        />
+                        <span className="text-xs text-muted-foreground">/ {book.pageCount}</span>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => savePageNumber(book.id)}
+                          className="h-6 w-6 p-0"
+                        >
+                          <Check className="h-3 w-3" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={cancelEditingPage}
+                          className="h-6 w-6 p-0"
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground">
+                          Currently on page {book.currentPage || 1}
+                        </span>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => startEditingPage(book.id, book.currentPage || 1)}
+                          className="h-6 px-2 text-xs"
+                        >
+                          <Edit className="h-3 w-3 mr-1" />
+                          Update
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}

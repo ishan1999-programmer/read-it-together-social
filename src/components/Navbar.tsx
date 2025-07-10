@@ -86,9 +86,10 @@ const Navbar = () => {
       </Link>
 
       <div className="flex items-center space-x-2">
-        <Button asChild variant="ghost" size="icon" className="hover:bg-accent p-3">
-          <Link to="/add-book">
-            <Plus className={`${isMobile ? 'h-6 w-6' : 'h-8 w-8'} text-primary`} />
+        <Button asChild variant="ghost" className="hover:bg-accent px-3 py-2 h-auto">
+          <Link to="/add-book" className="flex items-center gap-2">
+            <Plus className="h-4 w-4 text-primary" />
+            <span className="text-primary font-medium">Post</span>
           </Link>
         </Button>
         
