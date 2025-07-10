@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import { Input } from '@/components/ui/input';
@@ -96,18 +95,46 @@ const Search = () => {
     return () => clearTimeout(timeoutId);
   }, [searchQuery]);
 
-  // Toggle "Want to Read" status
-  const toggleWantToRead = (bookId: string, bookTitle: string) => {
+  // Toggle "Want to Read" status and save to My Feeds
+  const toggleWantToRead = (bookId: string, bookTitle: string, book: GoogleBook) => {
     const newWantToReadBooks = new Set(wantToReadBooks);
     
     if (newWantToReadBooks.has(bookId)) {
       newWantToReadBooks.delete(bookId);
+      
+      // Remove from My Feeds
+      const savedBooks = localStorage.getItem('myFeedsBooks');
+      if (savedBooks) {
+        const books = JSON.parse(savedBooks);
+        const updatedBooks = books.filter((b: any) => b.id !== bookId);
+        localStorage.setItem('myFeedsBooks', JSON.stringify(updatedBooks));
+      }
+      
       toast({
         title: "Removed from Want to Read",
         description: `"${bookTitle}" has been removed from your reading list.`,
       });
     } else {
       newWantToReadBooks.add(bookId);
+      
+      // Add to My Feeds
+      const bookData = {
+        id: bookId,
+        title: book.volumeInfo.title,
+        authors: book.volumeInfo.authors || ['Unknown Author'],
+        categories: book.volumeInfo.categories || ['Unknown Genre'],
+        averageRating: book.volumeInfo.averageRating,
+        pageCount: book.volumeInfo.pageCount,
+        imageLinks: book.volumeInfo.imageLinks,
+        status: 'want-to-read' as const,
+        addedDate: new Date().toISOString()
+      };
+      
+      const savedBooks = localStorage.getItem('myFeedsBooks');
+      const books = savedBooks ? JSON.parse(savedBooks) : [];
+      books.push(bookData);
+      localStorage.setItem('myFeedsBooks', JSON.stringify(books));
+      
       toast({
         title: "Added to Want to Read",
         description: `"${bookTitle}" has been added to your reading list.`,
@@ -221,7 +248,7 @@ const Search = () => {
                           variant={wantToReadBooks.has(book.id) ? "default" : "outline"}
                           onClick={(e) => {
                             e.stopPropagation();
-                            toggleWantToRead(book.id, book.volumeInfo.title);
+                            toggleWantToRead(book.id, book.volumeInfo.title, book);
                           }}
                           className="flex-1 text-xs"
                         >
@@ -319,7 +346,7 @@ const Search = () => {
                                 {/* Action Buttons */}
                                 <div className="flex flex-wrap gap-3">
                                   <Button
-                                    onClick={() => toggleWantToRead(book.id, book.volumeInfo.title)}
+                                    onClick={() => toggleWantToRead(book.id, book.volumeInfo.title, book)}
                                     variant={wantToReadBooks.has(book.id) ? "default" : "outline"}
                                   >
                                     <Heart className={`h-4 w-4 mr-2 ${wantToReadBooks.has(book.id) ? 'fill-current' : ''}`} />

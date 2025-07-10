@@ -19,7 +19,8 @@ import { Button } from '@/components/ui/button';
 
 const navigationItems = [
   { title: 'Home', url: '/', icon: Home },
-  { title: 'My Feeds', url: '/my-feeds', icon: Rss },
+  { title: 'Feeds', url: '/feeds', icon: Rss },
+  { title: 'My Reads', url: '/my-feeds', icon: BookOpen },
   { title: 'Explore', url: '/explore', icon: Compass },
   { title: 'Search', url: '/search', icon: Search },
   { title: 'Profile', url: '/profile', icon: User },
