@@ -14,6 +14,7 @@ import Search from "./pages/Search";
 import Settings from "./pages/Settings";
 import AddBook from "./pages/AddBook";
 import BookDetails from "./pages/BookDetails";
+import MyFeeds from "./pages/MyFeeds";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/signup" element={<Signup />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/" element={<Home />} />
+          <Route path="/my-feeds" element={<MyFeeds />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/search" element={<Search />} />
           <Route path="/settings" element={<Settings />} />
