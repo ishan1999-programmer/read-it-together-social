@@ -6,13 +6,17 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import BookPost from '@/components/BookPost';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { useNavigate, Link } from 'react-router-dom';
 import { 
   Edit3, 
   Calendar,
   Camera,
   Users,
   User,
-  BookOpen
+  BookOpen,
+  Settings,
+  LogOut
 } from 'lucide-react';
 
 // Mock current user data
@@ -71,6 +75,8 @@ const MyProfile = () => {
   const [user] = useState(mockCurrentUser);
   const [posts, setPosts] = useState(mockMyPosts);
   const [showEditProfile, setShowEditProfile] = useState(false);
+  const isMobile = useIsMobile();
+  const navigate = useNavigate();
 
   const handleLike = (postId: number) => {
     setPosts(prevPosts => 
@@ -89,6 +95,11 @@ const MyProfile = () => {
   const handleEditProfile = () => {
     setShowEditProfile(true);
     console.log('Edit profile clicked');
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    navigate('/login');
   };
 
   return (
@@ -171,9 +182,35 @@ const MyProfile = () => {
           </div>
         </div>
 
+        {/* Mobile Settings and Logout */}
+        {isMobile && (
+          <div className="bg-card rounded-xl border border-border p-4 mb-8">
+            <div className="flex gap-4">
+              <Button 
+                asChild 
+                variant="outline" 
+                className="flex-1 flex items-center gap-2"
+              >
+                <Link to="/settings">
+                  <Settings className="h-4 w-4" />
+                  Settings
+                </Link>
+              </Button>
+              <Button 
+                onClick={handleLogout}
+                variant="destructive" 
+                className="flex-1 flex items-center gap-2"
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </Button>
+            </div>
+          </div>
+        )}
+
         {/* Content Tabs */}
         <Tabs defaultValue="posts" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8">
+          <TabsList className={`grid w-full ${isMobile ? 'grid-cols-2' : 'grid-cols-3'} mb-8`}>
             <TabsTrigger value="posts" className="flex items-center gap-2">
               <BookOpen className="h-4 w-4" />
               Posts
@@ -182,10 +219,12 @@ const MyProfile = () => {
               <Users className="h-4 w-4" />
               Followers
             </TabsTrigger>
-            <TabsTrigger value="following" className="flex items-center gap-2">
-              <User className="h-4 w-4" />
-              Following
-            </TabsTrigger>
+            {!isMobile && (
+              <TabsTrigger value="following" className="flex items-center gap-2">
+                <User className="h-4 w-4" />
+                Following
+              </TabsTrigger>
+            )}
           </TabsList>
           
           <TabsContent value="posts" className="space-y-6">
@@ -228,25 +267,27 @@ const MyProfile = () => {
             </div>
           </TabsContent>
           
-          <TabsContent value="following" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {mockFollowing.map(following => (
-                <div key={following.id} className="bg-card rounded-lg border border-border p-4 flex items-center gap-4">
-                  <Avatar className="w-12 h-12">
-                    <AvatarImage src={following.avatar || ''} />
-                    <AvatarFallback className="bg-primary/10 text-primary">
-                      {following.name.split(' ').map(n => n[0]).join('')}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <h4 className="font-semibold">{following.name}</h4>
-                    <p className="text-sm text-muted-foreground">@{following.username}</p>
+          {!isMobile && (
+            <TabsContent value="following" className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {mockFollowing.map(following => (
+                  <div key={following.id} className="bg-card rounded-lg border border-border p-4 flex items-center gap-4">
+                    <Avatar className="w-12 h-12">
+                      <AvatarImage src={following.avatar || ''} />
+                      <AvatarFallback className="bg-primary/10 text-primary">
+                        {following.name.split(' ').map(n => n[0]).join('')}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1">
+                      <h4 className="font-semibold">{following.name}</h4>
+                      <p className="text-sm text-muted-foreground">@{following.username}</p>
+                    </div>
+                    <Button size="sm" variant="outline">View</Button>
                   </div>
-                  <Button size="sm" variant="outline">View</Button>
-                </div>
-              ))}
-            </div>
-          </TabsContent>
+                ))}
+              </div>
+            </TabsContent>
+          )}
         </Tabs>
       </div>
     </Layout>

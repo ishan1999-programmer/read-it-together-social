@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BookOpen, Plus } from 'lucide-react';
+import { BookOpen, Search, Bell, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import NotificationDropdown from './NotificationDropdown';
 import ProfileDropdown from './ProfileDropdown';
@@ -85,9 +86,17 @@ const Navbar = () => {
       </Link>
 
       <div className="flex items-center space-x-2">
-        <Button asChild variant="default" className="px-3 py-2 h-auto">
-          <Link to="/add-book" className="flex items-center gap-2">
-            <span className="text-primary-foreground font-medium">+Post</span>
+        {!isMobile && (
+          <Button asChild variant="default" className="px-3 py-2 h-auto">
+            <Link to="/add-book" className="flex items-center gap-2">
+              <span className="text-primary-foreground font-medium">+Post</span>
+            </Link>
+          </Button>
+        )}
+        
+        <Button asChild variant="ghost" size="icon" className="hover:bg-accent">
+          <Link to="/search">
+            <Search className={`${isMobile ? 'h-5 w-5' : 'h-6 w-6'} text-primary`} />
           </Link>
         </Button>
         

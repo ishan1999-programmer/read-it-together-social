@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import MyProfile from '@/components/MyProfile';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import BookPost from '@/components/BookPost';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { 
   Users, 
   UserPlus, 
@@ -18,7 +19,9 @@ import {
   Star,
   User,
   FileText,
-  Rss
+  Rss,
+  Settings,
+  LogOut
 } from 'lucide-react';
 
 // Mock user data
@@ -151,6 +154,8 @@ interface Book {
 
 const Profile = () => {
   const { username } = useParams();
+  const navigate = useNavigate();
+  const isMobile = useIsMobile();
   
   // If no username is provided, show the current user's profile
   if (!username) {
@@ -332,6 +337,11 @@ const Profile = () => {
     </Tabs>
   );
 
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
+
   return (
     <Layout>
       <div className="max-w-4xl mx-auto">
@@ -415,27 +425,65 @@ const Profile = () => {
           </div>
         </div>
 
+        {/* Mobile Settings and Logout - Only show for own profile */}
+        {isMobile && user.isOwnProfile && (
+          <div className="bg-card rounded-xl border border-border p-4 mb-8">
+            <div className="flex gap-4">
+              <Button 
+                asChild 
+                variant="outline" 
+                className="flex-1 flex items-center gap-2"
+              >
+                <Link to="/settings">
+                  <Settings className="h-4 w-4" />
+                  Settings
+                </Link>
+              </Button>
+              <Button 
+                onClick={handleLogout}
+                variant="destructive" 
+                className="flex-1 flex items-center gap-2"
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </Button>
+            </div>
+          </div>
+        )}
+
         {/* Content Tabs */}
         {(!user.isPrivate || isFollowing || user.isOwnProfile) ? (
           <Tabs defaultValue="posts" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-8">
+            <TabsList className={`grid w-full ${isMobile ? 'grid-cols-2' : 'grid-cols-4'} mb-8`}>
               <TabsTrigger value="posts" className="flex items-center gap-2">
                 <BookOpen className="h-4 w-4" />
-                Posts
+                {isMobile ? 'Posts' : 'Posts'}
               </TabsTrigger>
-              <TabsTrigger value="reads" className="flex items-center gap-2">
-                <Rss className="h-4 w-4" />
-                Reads
-              </TabsTrigger>
+              {!isMobile && (
+                <TabsTrigger value="reads" className="flex items-center gap-2">
+                  <Rss className="h-4 w-4" />
+                  Reads
+                </TabsTrigger>
+              )}
               <TabsTrigger value="followers" className="flex items-center gap-2">
                 <Users className="h-4 w-4" />
-                Followers
+                {isMobile ? 'Followers' : 'Followers'}
               </TabsTrigger>
-              <TabsTrigger value="following" className="flex items-center gap-2">
-                <User className="h-4 w-4" />
-                Following
-              </TabsTrigger>
+              {!isMobile && (
+                <TabsTrigger value="following" className="flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  Following
+                </TabsTrigger>
+              )}
             </TabsList>
+            
+            {/* Mobile: Show reads in a separate section when not in tabs */}
+            {isMobile && (
+              <div className="mb-8">
+                <h3 className="text-lg font-semibold mb-4">Reading List</h3>
+                {renderReadsTab()}
+              </div>
+            )}
             
             <TabsContent value="posts" className="space-y-6">
               {posts.length === 0 ? (
@@ -454,9 +502,11 @@ const Profile = () => {
               )}
             </TabsContent>
             
-            <TabsContent value="reads" className="space-y-6">
-              {renderReadsTab()}
-            </TabsContent>
+            {!isMobile && (
+              <TabsContent value="reads" className="space-y-6">
+                {renderReadsTab()}
+              </TabsContent>
+            )}
             
             <TabsContent value="followers" className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -487,34 +537,36 @@ const Profile = () => {
               </div>
             </TabsContent>
             
-            <TabsContent value="following" className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {following.map(followingUser => (
-                  <div key={followingUser.id} className="bg-card rounded-lg border border-border p-4 flex items-center gap-4">
-                    <Avatar className="w-12 h-12">
-                      <AvatarImage src={followingUser.avatar || ''} />
-                      <AvatarFallback className="bg-primary/10 text-primary">
-                        {followingUser.name.split(' ').map(n => n[0]).join('')}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <h4 className="font-semibold">{followingUser.name}</h4>
-                      <p className="text-sm text-muted-foreground">@{followingUser.username}</p>
+            {!isMobile && (
+              <TabsContent value="following" className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {following.map(followingUser => (
+                    <div key={followingUser.id} className="bg-card rounded-lg border border-border p-4 flex items-center gap-4">
+                      <Avatar className="w-12 h-12">
+                        <AvatarImage src={followingUser.avatar || ''} />
+                        <AvatarFallback className="bg-primary/10 text-primary">
+                          {followingUser.name.split(' ').map(n => n[0]).join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <h4 className="font-semibold">{followingUser.name}</h4>
+                        <p className="text-sm text-muted-foreground">@{followingUser.username}</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline">View</Button>
+                        <Button 
+                          size="sm" 
+                          variant={followingUser.isFollowing ? "outline" : "default"}
+                          onClick={() => handleFollowUser(followingUser.id, !followingUser.isFollowing)}
+                        >
+                          {followingUser.isFollowing ? 'Following' : 'Follow'}
+                        </Button>
+                      </div>
                     </div>
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline">View</Button>
-                      <Button 
-                        size="sm" 
-                        variant={followingUser.isFollowing ? "outline" : "default"}
-                        onClick={() => handleFollowUser(followingUser.id, !followingUser.isFollowing)}
-                      >
-                        {followingUser.isFollowing ? 'Following' : 'Follow'}
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </TabsContent>
+                  ))}
+                </div>
+              </TabsContent>
+            )}
           </Tabs>
         ) : (
           <div className="bg-card rounded-lg border border-border p-12 text-center">
