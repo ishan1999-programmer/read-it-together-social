@@ -40,6 +40,7 @@ const MyFeeds = () => {
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
   const [editingPageId, setEditingPageId] = useState<string | null>(null);
   const [tempPageNumber, setTempPageNumber] = useState<number>(0);
+  const [originalPageNumber, setOriginalPageNumber] = useState<number>(0);
 
   useEffect(() => {
     // Load books from localStorage
@@ -111,6 +112,7 @@ const MyFeeds = () => {
   const startEditingPage = (bookId: string, currentPage: number) => {
     setEditingPageId(bookId);
     setTempPageNumber(currentPage);
+    setOriginalPageNumber(currentPage);
   };
 
   const savePageNumber = (bookId: string) => {
@@ -122,7 +124,7 @@ const MyFeeds = () => {
 
   const cancelEditingPage = () => {
     setEditingPageId(null);
-    setTempPageNumber(0);
+    setTempPageNumber(originalPageNumber);
   };
 
   const updateCurrentPage = (bookId: string, currentPage: number) => {
@@ -135,6 +137,10 @@ const MyFeeds = () => {
     
     setBooks(updatedBooks);
     localStorage.setItem('myFeedsBooks', JSON.stringify(updatedBooks));
+  };
+
+  const hasPageNumberChanged = (bookId: string) => {
+    return editingPageId === bookId && tempPageNumber !== originalPageNumber;
   };
 
   const renderBookCard = (book: Book, showStatusControls = true) => (
@@ -205,19 +211,19 @@ const MyFeeds = () => {
                         <span className="text-xs text-muted-foreground">/ {book.pageCount}</span>
                         <Button
                           size="sm"
-                          variant="ghost"
+                          variant={hasPageNumberChanged(book.id) ? "default" : "secondary"}
                           onClick={() => savePageNumber(book.id)}
-                          className="h-6 w-6 p-0"
+                          className="h-6 px-2 text-xs"
                         >
-                          <Check className="h-3 w-3" />
+                          Update
                         </Button>
                         <Button
                           size="sm"
-                          variant="ghost"
+                          variant="outline"
                           onClick={cancelEditingPage}
-                          className="h-6 w-6 p-0"
+                          className="h-6 px-2 text-xs"
                         >
-                          <X className="h-3 w-3" />
+                          Cancel
                         </Button>
                       </div>
                     ) : (
@@ -229,9 +235,9 @@ const MyFeeds = () => {
                           size="sm"
                           variant="outline"
                           onClick={() => startEditingPage(book.id, book.currentPage || 1)}
-                          className="h-6 px-2 text-xs"
+                          className="h-6 px-2 text-xs flex items-center gap-1"
                         >
-                          <Edit className="h-3 w-3 mr-1" />
+                          <Edit className="h-3 w-3" />
                           Update
                         </Button>
                       </div>

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { BookOpen, Plus } from 'lucide-react';
@@ -86,10 +85,9 @@ const Navbar = () => {
       </Link>
 
       <div className="flex items-center space-x-2">
-        <Button asChild variant="ghost" className="hover:bg-accent px-3 py-2 h-auto">
+        <Button asChild variant="default" className="px-3 py-2 h-auto">
           <Link to="/add-book" className="flex items-center gap-2">
-            <Plus className="h-4 w-4 text-primary" />
-            <span className="text-primary font-medium">Post</span>
+            <span className="text-primary-foreground font-medium">+Post</span>
           </Link>
         </Button>
         
