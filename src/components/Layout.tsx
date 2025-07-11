@@ -26,7 +26,7 @@ const Layout = ({ children }: LayoutProps) => {
         <div className="flex w-full">
           {!isMobile && <Sidebar />}
           <main className={`flex-1 bg-background min-h-[calc(100vh-4rem)] overflow-x-hidden ${isMobile ? 'pb-20' : ''}`}>
-            <div className={`${isMobile ? 'p-4' : 'p-6'} w-full`}>
+            <div className={`${isMobile ? 'p-4' : 'p-6'} w-full max-w-full`}>
               {children}
             </div>
           </main>

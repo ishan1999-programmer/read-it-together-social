@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import MyProfile from '@/components/MyProfile';
 import { Button } from '@/components/ui/button';
@@ -153,12 +154,12 @@ interface Book {
 }
 
 const Profile = () => {
-  const { username } = useParams();
+  const { userId } = useParams();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   
-  // If no username is provided, show the current user's profile
-  if (!username) {
+  // If no userId is provided, show the current user's profile
+  if (!userId) {
     return <MyProfile />;
   }
 
@@ -346,12 +347,12 @@ const Profile = () => {
     <Layout>
       <div className="max-w-4xl mx-auto">
         {/* Profile Header - same as before */}
-        <div className="bg-card rounded-xl border border-border p-8 mb-8">
+        <div className="bg-card rounded-xl border border-border p-4 md:p-8 mb-8">
           
           <div className="flex flex-col md:flex-row gap-6">
-            <Avatar className="w-32 h-32 mx-auto md:mx-0">
+            <Avatar className="w-24 h-24 md:w-32 md:h-32 mx-auto md:mx-0">
               <AvatarImage src={user.avatar || ''} />
-              <AvatarFallback className="text-3xl font-bold bg-primary/10 text-primary">
+              <AvatarFallback className="text-2xl md:text-3xl font-bold bg-primary/10 text-primary">
                 {user.name.split(' ').map(n => n[0]).join('')}
               </AvatarFallback>
             </Avatar>
@@ -359,10 +360,10 @@ const Profile = () => {
             <div className="flex-1 text-center md:text-left">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
                 <div>
-                  <h1 className="text-3xl font-bold text-foreground mb-1">{user.name}</h1>
-                  <p className="text-muted-foreground text-lg">@{user.username}</p>
+                  <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1">{user.name}</h1>
+                  <p className="text-muted-foreground text-base md:text-lg">@{user.username}</p>
                   {user.isPrivate && (
-                    <div className="flex items-center gap-1 mt-2">
+                    <div className="flex items-center gap-1 mt-2 justify-center md:justify-start">
                       <Lock className="h-4 w-4 text-muted-foreground" />
                       <span className="text-sm text-muted-foreground">Private Profile</span>
                     </div>
@@ -374,48 +375,49 @@ const Profile = () => {
                     onClick={handleFollow}
                     variant={isFollowing ? "outline" : "default"}
                     className={isFollowing ? "" : "bg-primary hover:bg-primary/90"}
+                    size={isMobile ? "sm" : "default"}
                   >
-                    <UserPlus className="h-5 w-5 mr-2" />
+                    <UserPlus className="h-4 w-4 md:h-5 md:w-5 mr-2" />
                     {isPending ? 'Requested' : isFollowing ? 'Following' : 'Follow'}
                   </Button>
                 </div>
               </div>
               
-              <p className="text-foreground mb-6 leading-relaxed">{user.bio}</p>
+              <p className="text-foreground mb-6 leading-relaxed text-sm md:text-base">{user.bio}</p>
               
               {/* Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div className="text-center p-3 bg-muted/50 rounded-lg">
-                  <div className="text-2xl font-bold text-primary">{user.followerCount}</div>
-                  <div className="text-sm text-muted-foreground">Followers</div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 mb-6">
+                <div className="text-center p-2 md:p-3 bg-muted/50 rounded-lg">
+                  <div className="text-xl md:text-2xl font-bold text-primary">{user.followerCount}</div>
+                  <div className="text-xs md:text-sm text-muted-foreground">Followers</div>
                 </div>
-                <div className="text-center p-3 bg-muted/50 rounded-lg">
-                  <div className="text-2xl font-bold text-primary">{user.followingCount}</div>
-                  <div className="text-sm text-muted-foreground">Following</div>
+                <div className="text-center p-2 md:p-3 bg-muted/50 rounded-lg">
+                  <div className="text-xl md:text-2xl font-bold text-primary">{user.followingCount}</div>
+                  <div className="text-xs md:text-sm text-muted-foreground">Following</div>
                 </div>
-                <div className="text-center p-3 bg-muted/50 rounded-lg">
-                  <div className="text-2xl font-bold text-primary">{user.booksRead}</div>
-                  <div className="text-sm text-muted-foreground">Books Read</div>
+                <div className="text-center p-2 md:p-3 bg-muted/50 rounded-lg">
+                  <div className="text-xl md:text-2xl font-bold text-primary">{user.booksRead}</div>
+                  <div className="text-xs md:text-sm text-muted-foreground">Books Read</div>
                 </div>
-                <div className="text-center p-3 bg-muted/50 rounded-lg">
-                  <div className="text-2xl font-bold text-primary">{user.currentStreak}</div>
-                  <div className="text-sm text-muted-foreground">Day Streak</div>
+                <div className="text-center p-2 md:p-3 bg-muted/50 rounded-lg">
+                  <div className="text-xl md:text-2xl font-bold text-primary">{user.currentStreak}</div>
+                  <div className="text-xs md:text-sm text-muted-foreground">Day Streak</div>
                 </div>
               </div>
               
               {/* Favorite Genres */}
               <div className="mb-4">
                 <h3 className="text-sm font-medium text-muted-foreground mb-2">Favorite Genres</h3>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 justify-center md:justify-start">
                   {user.favoriteGenres.map(genre => (
-                    <Badge key={genre} variant="secondary" className="bg-accent/50">
+                    <Badge key={genre} variant="secondary" className="bg-accent/50 text-xs">
                       {genre}
                     </Badge>
                   ))}
                 </div>
               </div>
               
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-4 text-sm text-muted-foreground justify-center md:justify-start">
                 <div className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
                   <span>Joined {user.joinDate}</span>
@@ -455,22 +457,22 @@ const Profile = () => {
         {(!user.isPrivate || isFollowing || user.isOwnProfile) ? (
           <Tabs defaultValue="posts" className="w-full">
             <TabsList className={`grid w-full ${isMobile ? 'grid-cols-2' : 'grid-cols-4'} mb-8`}>
-              <TabsTrigger value="posts" className="flex items-center gap-2">
+              <TabsTrigger value="posts" className="flex items-center gap-2 text-xs md:text-sm">
                 <BookOpen className="h-4 w-4" />
-                {isMobile ? 'Posts' : 'Posts'}
+                Posts
               </TabsTrigger>
               {!isMobile && (
-                <TabsTrigger value="reads" className="flex items-center gap-2">
+                <TabsTrigger value="reads" className="flex items-center gap-2 text-xs md:text-sm">
                   <Rss className="h-4 w-4" />
                   Reads
                 </TabsTrigger>
               )}
-              <TabsTrigger value="followers" className="flex items-center gap-2">
+              <TabsTrigger value="followers" className="flex items-center gap-2 text-xs md:text-sm">
                 <Users className="h-4 w-4" />
-                {isMobile ? 'Followers' : 'Followers'}
+                Followers
               </TabsTrigger>
               {!isMobile && (
-                <TabsTrigger value="following" className="flex items-center gap-2">
+                <TabsTrigger value="following" className="flex items-center gap-2 text-xs md:text-sm">
                   <User className="h-4 w-4" />
                   Following
                 </TabsTrigger>
@@ -487,9 +489,9 @@ const Profile = () => {
             
             <TabsContent value="posts" className="space-y-6">
               {posts.length === 0 ? (
-                <div className="bg-card rounded-lg border border-border p-12 text-center">
-                  <BookOpen className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground text-lg">No posts shared yet</p>
+                <div className="bg-card rounded-lg border border-border p-8 md:p-12 text-center">
+                  <BookOpen className="h-12 w-12 md:h-16 md:w-16 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground text-base md:text-lg">No posts shared yet</p>
                 </div>
               ) : (
                 posts.map(post => (
@@ -509,25 +511,26 @@ const Profile = () => {
             )}
             
             <TabsContent value="followers" className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 {followers.map(follower => (
                   <div key={follower.id} className="bg-card rounded-lg border border-border p-4 flex items-center gap-4">
-                    <Avatar className="w-12 h-12">
+                    <Avatar className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0">
                       <AvatarImage src={follower.avatar || ''} />
-                      <AvatarFallback className="bg-primary/10 text-primary">
+                      <AvatarFallback className="bg-primary/10 text-primary text-sm">
                         {follower.name.split(' ').map(n => n[0]).join('')}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="flex-1">
-                      <h4 className="font-semibold">{follower.name}</h4>
-                      <p className="text-sm text-muted-foreground">@{follower.username}</p>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-semibold truncate text-sm md:text-base">{follower.name}</h4>
+                      <p className="text-xs md:text-sm text-muted-foreground truncate">@{follower.username}</p>
                     </div>
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline">View</Button>
+                    <div className="flex gap-2 flex-shrink-0">
+                      <Button size="sm" variant="outline" className="text-xs">View</Button>
                       <Button 
                         size="sm" 
                         variant={follower.isFollowing ? "outline" : "default"}
                         onClick={() => handleFollowUser(follower.id, !follower.isFollowing)}
+                        className="text-xs"
                       >
                         {follower.isFollowing ? 'Following' : 'Follow'}
                       </Button>
@@ -539,25 +542,26 @@ const Profile = () => {
             
             {!isMobile && (
               <TabsContent value="following" className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                   {following.map(followingUser => (
                     <div key={followingUser.id} className="bg-card rounded-lg border border-border p-4 flex items-center gap-4">
-                      <Avatar className="w-12 h-12">
+                      <Avatar className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0">
                         <AvatarImage src={followingUser.avatar || ''} />
-                        <AvatarFallback className="bg-primary/10 text-primary">
+                        <AvatarFallback className="bg-primary/10 text-primary text-sm">
                           {followingUser.name.split(' ').map(n => n[0]).join('')}
                         </AvatarFallback>
                       </Avatar>
-                      <div className="flex-1">
-                        <h4 className="font-semibold">{followingUser.name}</h4>
-                        <p className="text-sm text-muted-foreground">@{followingUser.username}</p>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold truncate text-sm md:text-base">{followingUser.name}</h4>
+                        <p className="text-xs md:text-sm text-muted-foreground truncate">@{followingUser.username}</p>
                       </div>
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="outline">View</Button>
+                      <div className="flex gap-2 flex-shrink-0">
+                        <Button size="sm" variant="outline" className="text-xs">View</Button>
                         <Button 
                           size="sm" 
                           variant={followingUser.isFollowing ? "outline" : "default"}
                           onClick={() => handleFollowUser(followingUser.id, !followingUser.isFollowing)}
+                          className="text-xs"
                         >
                           {followingUser.isFollowing ? 'Following' : 'Follow'}
                         </Button>
@@ -569,12 +573,12 @@ const Profile = () => {
             )}
           </Tabs>
         ) : (
-          <div className="bg-card rounded-lg border border-border p-12 text-center">
-            <Lock className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-xl font-semibold mb-2">This account is private</h3>
-            <p className="text-muted-foreground mb-6">Follow this user to see their books and reviews</p>
-            <Button onClick={handleFollow} className="bg-primary hover:bg-primary/90">
-              <UserPlus className="h-5 w-5 mr-2" />
+          <div className="bg-card rounded-lg border border-border p-8 md:p-12 text-center">
+            <Lock className="h-12 w-12 md:h-16 md:w-16 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg md:text-xl font-semibold mb-2">This account is private</h3>
+            <p className="text-muted-foreground mb-6 text-sm md:text-base">Follow this user to see their books and reviews</p>
+            <Button onClick={handleFollow} className="bg-primary hover:bg-primary/90" size={isMobile ? "sm" : "default"}>
+              <UserPlus className="h-4 w-4 md:h-5 md:w-5 mr-2" />
               {isPending ? 'Request Sent' : 'Send Follow Request'}
             </Button>
           </div>

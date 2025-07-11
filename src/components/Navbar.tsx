@@ -78,7 +78,7 @@ const Navbar = () => {
 
   return (
     <nav className="bg-background border-b border-border h-16 flex items-center justify-between px-4 lg:px-6 sticky top-0 z-40">
-      <Link to="/" className="flex items-center space-x-2">
+      <Link to="/feeds" className="flex items-center space-x-2">
         <BookOpen className={`${isMobile ? 'h-6 w-6' : 'h-8 w-8'} text-primary`} />
         <span className={`font-bold ${isMobile ? 'text-lg' : 'text-xl'} text-primary`}>
           BookShare
@@ -87,7 +87,7 @@ const Navbar = () => {
 
       <div className="flex items-center space-x-2">
         {!isMobile && (
-          <Button asChild variant="default" className="px-3 py-2 h-auto">
+          <Button asChild variant="default" className="px-4 py-2 h-auto bg-primary hover:bg-primary/90">
             <Link to="/add-book" className="flex items-center gap-2">
               <span className="text-primary-foreground font-medium">+Post</span>
             </Link>
@@ -100,16 +100,20 @@ const Navbar = () => {
           </Link>
         </Button>
         
-        <NotificationDropdown 
-          notifications={postNotifications}
-          onMarkAsRead={handleMarkAsRead}
-        />
+        <div className="relative">
+          <NotificationDropdown 
+            notifications={postNotifications}
+            onMarkAsRead={handleMarkAsRead}
+          />
+        </div>
         
-        <ProfileDropdown 
-          followRequests={followRequests}
-          onAcceptFollowRequest={handleAcceptFollowRequest}
-          onRejectFollowRequest={handleRejectFollowRequest}
-        />
+        <div className="relative">
+          <ProfileDropdown 
+            followRequests={followRequests}
+            onAcceptFollowRequest={handleAcceptFollowRequest}
+            onRejectFollowRequest={handleRejectFollowRequest}
+          />
+        </div>
       </div>
     </nav>
   );

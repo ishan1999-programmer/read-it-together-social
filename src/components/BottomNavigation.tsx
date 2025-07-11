@@ -7,7 +7,7 @@ const navigationItems = [
   { title: 'Feed', url: '/feeds', icon: Home },
   { title: 'Explore', url: '/explore', icon: Compass },
   { title: 'Post', url: '/add-book', icon: Plus, isSpecial: true },
-  { title: 'My Reads', url: '/my-feeds', icon: BookOpen },
+  { title: 'My Reads', url: '/my-reads', icon: BookOpen },
   { title: 'Profile', url: '/profile', icon: User },
 ];
 
