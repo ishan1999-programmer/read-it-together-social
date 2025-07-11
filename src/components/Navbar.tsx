@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BookOpen, Search, Bell, User } from 'lucide-react';
+import { BookOpen, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import NotificationDropdown from './NotificationDropdown';
 import ProfileDropdown from './ProfileDropdown';
@@ -78,7 +77,7 @@ const Navbar = () => {
 
   return (
     <nav className="bg-background border-b border-border h-16 flex items-center justify-between px-4 lg:px-6 sticky top-0 z-40">
-      <Link to="/feeds" className="flex items-center space-x-2">
+      <Link to="/" className="flex items-center space-x-2">
         <BookOpen className={`${isMobile ? 'h-6 w-6' : 'h-8 w-8'} text-primary`} />
         <span className={`font-bold ${isMobile ? 'text-lg' : 'text-xl'} text-primary`}>
           BookShare
@@ -86,34 +85,22 @@ const Navbar = () => {
       </Link>
 
       <div className="flex items-center space-x-2">
-        {!isMobile && (
-          <Button asChild variant="default" className="px-4 py-2 h-auto bg-primary hover:bg-primary/90">
-            <Link to="/add-book" className="flex items-center gap-2">
-              <span className="text-primary-foreground font-medium">+Post</span>
-            </Link>
-          </Button>
-        )}
-        
-        <Button asChild variant="ghost" size="icon" className="hover:bg-accent">
-          <Link to="/search">
-            <Search className={`${isMobile ? 'h-5 w-5' : 'h-6 w-6'} text-primary`} />
+        <Button asChild variant="default" className="px-3 py-2 h-auto">
+          <Link to="/add-book" className="flex items-center gap-2">
+            <span className="text-primary-foreground font-medium">+Post</span>
           </Link>
         </Button>
         
-        <div className="relative">
-          <NotificationDropdown 
-            notifications={postNotifications}
-            onMarkAsRead={handleMarkAsRead}
-          />
-        </div>
+        <NotificationDropdown 
+          notifications={postNotifications}
+          onMarkAsRead={handleMarkAsRead}
+        />
         
-        <div className="relative">
-          <ProfileDropdown 
-            followRequests={followRequests}
-            onAcceptFollowRequest={handleAcceptFollowRequest}
-            onRejectFollowRequest={handleRejectFollowRequest}
-          />
-        </div>
+        <ProfileDropdown 
+          followRequests={followRequests}
+          onAcceptFollowRequest={handleAcceptFollowRequest}
+          onRejectFollowRequest={handleRejectFollowRequest}
+        />
       </div>
     </nav>
   );

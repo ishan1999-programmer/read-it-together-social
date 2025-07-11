@@ -1,10 +1,10 @@
-
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Index from './pages/Index';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
+import Home from './pages/Home';
 import MyFeeds from './pages/MyFeeds';
 import Explore from './pages/Explore';
 import Search from './pages/Search';
@@ -24,8 +24,9 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/feeds" element={<Feeds />} />
-          <Route path="/my-reads" element={<MyFeeds />} />
+          <Route path="/my-feeds" element={<MyFeeds />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/search" element={<Search />} />
           <Route path="/profile" element={<Profile />} />

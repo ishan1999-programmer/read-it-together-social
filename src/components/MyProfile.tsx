@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
@@ -5,17 +6,13 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import BookPost from '@/components/BookPost';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { useNavigate, Link } from 'react-router-dom';
 import { 
   Edit3, 
   Calendar,
   Camera,
   Users,
   User,
-  BookOpen,
-  Settings,
-  LogOut
+  BookOpen
 } from 'lucide-react';
 
 // Mock current user data
@@ -74,8 +71,6 @@ const MyProfile = () => {
   const [user] = useState(mockCurrentUser);
   const [posts, setPosts] = useState(mockMyPosts);
   const [showEditProfile, setShowEditProfile] = useState(false);
-  const isMobile = useIsMobile();
-  const navigate = useNavigate();
 
   const handleLike = (postId: number) => {
     setPosts(prevPosts => 
@@ -96,82 +91,77 @@ const MyProfile = () => {
     console.log('Edit profile clicked');
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    navigate('/login');
-  };
-
   return (
     <Layout>
       <div className="max-w-4xl mx-auto">
         {/* Profile Header */}
-        <div className="bg-card rounded-xl border border-border p-4 md:p-8 mb-8">
+        <div className="bg-card rounded-xl border border-border p-8 mb-8">
           <div className="flex flex-col md:flex-row gap-6">
             <div className="relative mx-auto md:mx-0">
-              <Avatar className="w-24 h-24 md:w-32 md:h-32">
+              <Avatar className="w-32 h-32">
                 <AvatarImage src={user.avatar || ''} />
-                <AvatarFallback className="text-2xl md:text-3xl font-bold bg-primary/10 text-primary">
+                <AvatarFallback className="text-3xl font-bold bg-primary/10 text-primary">
                   {user.name.split(' ').map(n => n[0]).join('')}
                 </AvatarFallback>
               </Avatar>
               <Button 
                 size="icon" 
-                className="absolute -bottom-2 -right-2 rounded-full w-8 h-8 md:w-10 md:h-10 bg-primary hover:bg-primary/90"
+                className="absolute -bottom-2 -right-2 rounded-full w-10 h-10 bg-primary hover:bg-primary/90"
               >
-                <Camera className="h-4 w-4 md:h-5 md:w-5" />
+                <Camera className="h-5 w-5" />
               </Button>
             </div>
             
             <div className="flex-1 text-center md:text-left">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
                 <div>
-                  <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1">{user.name}</h1>
-                  <p className="text-muted-foreground text-base md:text-lg">@{user.username}</p>
+                  <h1 className="text-3xl font-bold text-foreground mb-1">{user.name}</h1>
+                  <p className="text-muted-foreground text-lg">@{user.username}</p>
                 </div>
                 
                 <div className="mt-4 md:mt-0">
-                  <Button onClick={handleEditProfile} className="bg-primary hover:bg-primary/90" size={isMobile ? "sm" : "default"}>
-                    <Edit3 className="h-4 w-4 md:h-5 md:w-5 mr-2" />
+                  <Button onClick={handleEditProfile} className="bg-primary hover:bg-primary/90">
+                    <Edit3 className="h-5 w-5 mr-2" />
                     Edit Profile
                   </Button>
                 </div>
               </div>
               
-              <p className="text-foreground mb-6 leading-relaxed text-sm md:text-base">{user.bio}</p>
+              <p className="text-foreground mb-6 leading-relaxed">{user.bio}</p>
               
               {/* Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 mb-6">
-                <div className="text-center p-2 md:p-3 bg-muted/50 rounded-lg">
-                  <div className="text-xl md:text-2xl font-bold text-primary">{user.followerCount}</div>
-                  <div className="text-xs md:text-sm text-muted-foreground">Followers</div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div className="text-center p-3 bg-muted/50 rounded-lg">
+                  <div className="text-2xl font-bold text-primary">{user.followerCount}</div>
+                  <div className="text-sm text-muted-foreground">Followers</div>
                 </div>
-                <div className="text-center p-2 md:p-3 bg-muted/50 rounded-lg">
-                  <div className="text-xl md:text-2xl font-bold text-primary">{user.followingCount}</div>
-                  <div className="text-xs md:text-sm text-muted-foreground">Following</div>
+                <div className="text-center p-3 bg-muted/50 rounded-lg">
+                  <div className="text-2xl font-bold text-primary">{user.followingCount}</div>
+                  <div className="text-sm text-muted-foreground">Following</div>
                 </div>
-                <div className="text-center p-2 md:p-3 bg-muted/50 rounded-lg">
-                  <div className="text-xl md:text-2xl font-bold text-primary">{user.booksRead}</div>
-                  <div className="text-xs md:text-sm text-muted-foreground">Books Read</div>
+                <div className="text-center p-3 bg-muted/50 rounded-lg">
+                  <div className="text-2xl font-bold text-primary">{user.booksRead}</div>
+                  <div className="text-sm text-muted-foreground">Books Read</div>
                 </div>
-                <div className="text-center p-2 md:p-3 bg-muted/50 rounded-lg">
-                  <div className="text-xl md:text-2xl font-bold text-primary">{user.currentStreak}</div>
-                  <div className="text-xs md:text-sm text-muted-foreground">Day Streak</div>
+                <div className="text-center p-3 bg-muted/50 rounded-lg">
+                  <div className="text-2xl font-bold text-primary">{user.currentStreak}</div>
+                  <div className="text-sm text-muted-foreground">Day Streak</div>
                 </div>
               </div>
               
               {/* Favorite Genres */}
               <div className="mb-4">
                 <h3 className="text-sm font-medium text-muted-foreground mb-2">Favorite Genres</h3>
-                <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                <div className="flex flex-wrap gap-2">
                   {user.favoriteGenres.map(genre => (
-                    <Badge key={genre} variant="secondary" className="bg-accent/50 text-xs">
+                    <Badge key={genre} variant="secondary" className="bg-accent/50">
                       {genre}
                     </Badge>
                   ))}
                 </div>
               </div>
               
-              <div className="flex items-center gap-4 text-sm text-muted-foreground justify-center md:justify-start">
+              <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
                   <span>Joined {user.joinDate}</span>
@@ -181,44 +171,18 @@ const MyProfile = () => {
           </div>
         </div>
 
-        {/* Mobile Settings and Logout */}
-        {isMobile && (
-          <div className="bg-card rounded-xl border border-border p-4 mb-8">
-            <div className="flex gap-4">
-              <Button 
-                asChild 
-                variant="outline" 
-                className="flex-1 flex items-center gap-2"
-              >
-                <Link to="/settings">
-                  <Settings className="h-4 w-4" />
-                  Settings
-                </Link>
-              </Button>
-              <Button 
-                onClick={handleLogout}
-                variant="destructive" 
-                className="flex-1 flex items-center gap-2"
-              >
-                <LogOut className="h-4 w-4" />
-                Logout
-              </Button>
-            </div>
-          </div>
-        )}
-
         {/* Content Tabs */}
         <Tabs defaultValue="posts" className="w-full">
           <TabsList className="grid w-full grid-cols-3 mb-8">
-            <TabsTrigger value="posts" className="flex items-center gap-2 text-xs md:text-sm">
+            <TabsTrigger value="posts" className="flex items-center gap-2">
               <BookOpen className="h-4 w-4" />
               Posts
             </TabsTrigger>
-            <TabsTrigger value="followers" className="flex items-center gap-2 text-xs md:text-sm">
+            <TabsTrigger value="followers" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               Followers
             </TabsTrigger>
-            <TabsTrigger value="following" className="flex items-center gap-2 text-xs md:text-sm">
+            <TabsTrigger value="following" className="flex items-center gap-2">
               <User className="h-4 w-4" />
               Following
             </TabsTrigger>
@@ -226,9 +190,9 @@ const MyProfile = () => {
           
           <TabsContent value="posts" className="space-y-6">
             {posts.length === 0 ? (
-              <div className="bg-card rounded-lg border border-border p-8 md:p-12 text-center">
-                <BookOpen className="h-12 w-12 md:h-16 md:w-16 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground text-base md:text-lg">You haven't shared any books yet</p>
+              <div className="bg-card rounded-lg border border-border p-12 text-center">
+                <BookOpen className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground text-lg">You haven't shared any books yet</p>
                 <Button className="mt-4 bg-primary hover:bg-primary/90">
                   Share Your First Book
                 </Button>
@@ -245,40 +209,40 @@ const MyProfile = () => {
           </TabsContent>
           
           <TabsContent value="followers" className="space-y-6">
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {mockFollowers.map(follower => (
                 <div key={follower.id} className="bg-card rounded-lg border border-border p-4 flex items-center gap-4">
-                  <Avatar className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0">
+                  <Avatar className="w-12 h-12">
                     <AvatarImage src={follower.avatar || ''} />
-                    <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                    <AvatarFallback className="bg-primary/10 text-primary">
                       {follower.name.split(' ').map(n => n[0]).join('')}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold truncate text-sm md:text-base">{follower.name}</h4>
-                    <p className="text-xs md:text-sm text-muted-foreground truncate">@{follower.username}</p>
+                  <div className="flex-1">
+                    <h4 className="font-semibold">{follower.name}</h4>
+                    <p className="text-sm text-muted-foreground">@{follower.username}</p>
                   </div>
-                  <Button size="sm" variant="outline" className="text-xs flex-shrink-0">View</Button>
+                  <Button size="sm" variant="outline">View</Button>
                 </div>
               ))}
             </div>
           </TabsContent>
           
           <TabsContent value="following" className="space-y-6">
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {mockFollowing.map(following => (
                 <div key={following.id} className="bg-card rounded-lg border border-border p-4 flex items-center gap-4">
-                  <Avatar className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0">
+                  <Avatar className="w-12 h-12">
                     <AvatarImage src={following.avatar || ''} />
-                    <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                    <AvatarFallback className="bg-primary/10 text-primary">
                       {following.name.split(' ').map(n => n[0]).join('')}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold truncate text-sm md:text-base">{following.name}</h4>
-                    <p className="text-xs md:text-sm text-muted-foreground truncate">@{following.username}</p>
+                  <div className="flex-1">
+                    <h4 className="font-semibold">{following.name}</h4>
+                    <p className="text-sm text-muted-foreground">@{following.username}</p>
                   </div>
-                  <Button size="sm" variant="outline" className="text-xs flex-shrink-0">View</Button>
+                  <Button size="sm" variant="outline">View</Button>
                 </div>
               ))}
             </div>
