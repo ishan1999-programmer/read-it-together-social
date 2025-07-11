@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import MyProfile from '@/components/MyProfile';
 import { Button } from '@/components/ui/button';
@@ -42,7 +43,7 @@ const mockUser = {
 
 // Current user for comparison
 const currentUser = {
-  username: 'bookworm_john' // This should come from auth context in real app
+  username: 'bookworm_john'
 };
 
 // Mock posts data
@@ -94,12 +95,16 @@ const mockUserPosts = [
 // Mock followers and following data
 const mockFollowers = [
   { id: 1, name: 'John Doe', username: 'bookworm_john', avatar: null, isFollowing: true },
-  { id: 2, name: 'Sarah Chen', username: 'bookish_sarah', avatar: null, isFollowing: false }
+  { id: 2, name: 'Sarah Chen', username: 'bookish_sarah', avatar: null, isFollowing: false },
+  { id: 3, name: 'Mike Johnson', username: 'mike_reads', avatar: null, isFollowing: true },
+  { id: 4, name: 'Lisa Park', username: 'romance_lisa', avatar: null, isFollowing: false }
 ];
 
 const mockFollowing = [
   { id: 1, name: 'Jane Smith', username: 'romance_jane', avatar: null, isFollowing: false },
-  { id: 2, name: 'Alex Brown', username: 'mystery_alex', avatar: null, isFollowing: true }
+  { id: 2, name: 'Alex Brown', username: 'mystery_alex', avatar: null, isFollowing: true },
+  { id: 3, name: 'David Kim', username: 'sci_fi_dave', avatar: null, isFollowing: false },
+  { id: 4, name: 'Rachel Green', username: 'classic_rachel', avatar: null, isFollowing: true }
 ];
 
 // Mock reads data for other user
@@ -137,6 +142,28 @@ const mockUserBooks = [
     addedDate: '2023-12-01T00:00:00.000Z',
     startedDate: '2023-12-05T00:00:00.000Z',
     completedDate: '2024-01-05T00:00:00.000Z'
+  },
+  {
+    id: '4',
+    title: 'Project Hail Mary',
+    authors: ['Andy Weir'],
+    categories: ['Sci-Fi', 'Space'],
+    averageRating: 4.7,
+    pageCount: 496,
+    status: 'want-to-read' as const,
+    addedDate: '2024-01-12T00:00:00.000Z'
+  },
+  {
+    id: '5',
+    title: 'The Hobbit',
+    authors: ['J.R.R. Tolkien'],
+    categories: ['Fantasy', 'Classic'],
+    averageRating: 4.3,
+    pageCount: 366,
+    status: 'read' as const,
+    addedDate: '2023-11-01T00:00:00.000Z',
+    startedDate: '2023-11-05T00:00:00.000Z',
+    completedDate: '2023-11-20T00:00:00.000Z'
   }
 ];
 
@@ -170,8 +197,8 @@ const Profile = () => {
   // For other users, show their profile
   const [user] = useState({
     ...mockUser,
-    username: username, // Use the username from URL
-    name: username === 'mike_reads' ? 'Mike Johnson' : 'Emma Wilson', // Mock different users
+    username: username,
+    name: username === 'mike_reads' ? 'Mike Johnson' : 'Emma Wilson',
     bio: username === 'mike_reads' ? 'Mystery lover and thriller enthusiast. Always looking for the next page-turner!' : mockUser.bio,
     isOwnProfile: false
   });
@@ -313,6 +340,37 @@ const Profile = () => {
     return userBooks.filter(book => book.status === status);
   };
 
+  const renderUserCard = (user: any, isFollowersList: boolean = false) => (
+    <Card key={user.id} className="p-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Link to={`/profile/${user.username}`}>
+            <Avatar className="w-12 h-12">
+              <AvatarImage src={user.avatar || ''} />
+              <AvatarFallback className="bg-primary/10 text-primary">
+                {user.name.split(' ').map((n: string) => n[0]).join('')}
+              </AvatarFallback>
+            </Avatar>
+          </Link>
+          <div>
+            <Link to={`/profile/${user.username}`} className="hover:underline">
+              <h3 className="font-semibold text-foreground">{user.name}</h3>
+            </Link>
+            <p className="text-sm text-muted-foreground">@{user.username}</p>
+          </div>
+        </div>
+        <Button
+          size="sm"
+          variant={user.isFollowing ? "outline" : "default"}
+          onClick={() => handleFollowUser(user.id, !user.isFollowing)}
+        >
+          <UserPlus className="h-4 w-4 mr-1" />
+          {user.isFollowing ? 'Following' : 'Follow'}
+        </Button>
+      </div>
+    </Card>
+  );
+
   const renderReadsTab = () => (
     <Tabs defaultValue="want-to-read" className="w-full">
       <TabsList className="grid w-full grid-cols-3 mb-6">
@@ -378,12 +436,12 @@ const Profile = () => {
                 
                 <div className="mt-4 md:mt-0">
                   <Button 
-                    onClick={() => {}} // Add follow handler
-                    variant={user.isFollowing ? "outline" : "default"}
-                    className={user.isFollowing ? "" : "bg-primary hover:bg-primary/90"}
+                    onClick={handleFollow}
+                    variant={isFollowing ? "outline" : "default"}
+                    className={isFollowing ? "" : "bg-primary hover:bg-primary/90"}
                   >
                     <UserPlus className="h-5 w-5 mr-2" />
-                    {user.isFollowing ? 'Following' : 'Follow'}
+                    {isPending ? 'Pending' : (isFollowing ? 'Following' : 'Follow')}
                   </Button>
                 </div>
               </div>
@@ -436,11 +494,11 @@ const Profile = () => {
         <Tabs defaultValue="posts" className="w-full">
           <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-8">
             <TabsTrigger value="posts" className="flex items-center gap-2 text-xs md:text-sm">
-              <BookOpen className="h-4 w-4" />
+              <Rss className="h-4 w-4" />
               <span className="hidden sm:inline">Posts</span>
             </TabsTrigger>
             <TabsTrigger value="reads" className="flex items-center gap-2 text-xs md:text-sm">
-              <Rss className="h-4 w-4" />
+              <BookOpen className="h-4 w-4" />
               <span className="hidden sm:inline">Reads</span>
             </TabsTrigger>
             <TabsTrigger value="followers" className="flex items-center gap-2 text-xs md:text-sm">
@@ -454,31 +512,25 @@ const Profile = () => {
           </TabsList>
           
           <TabsContent value="posts" className="space-y-6">
-            <div className="bg-card rounded-lg border border-border p-8 md:p-12 text-center">
-              <BookOpen className="h-12 md:h-16 w-12 md:w-16 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground text-base md:text-lg">No posts shared yet</p>
-            </div>
+            {posts.map(post => (
+              <BookPost 
+                key={post.id} 
+                post={post} 
+                onLike={handleLike}
+              />
+            ))}
           </TabsContent>
           
           <TabsContent value="reads" className="space-y-6">
-            <div className="bg-card rounded-lg border border-border p-8 md:p-12 text-center">
-              <BookOpen className="h-12 md:h-16 w-12 md:w-16 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground text-base md:text-lg">Reading list is private</p>
-            </div>
+            {renderReadsTab()}
           </TabsContent>
           
-          <TabsContent value="followers" className="space-y-6">
-            <div className="bg-card rounded-lg border border-border p-8 md:p-12 text-center">
-              <Users className="h-12 md:h-16 w-12 md:w-16 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground text-base md:text-lg">Followers list is private</p>
-            </div>
+          <TabsContent value="followers" className="space-y-4">
+            {followers.map(follower => renderUserCard(follower, true))}
           </TabsContent>
           
-          <TabsContent value="following" className="space-y-6">
-            <div className="bg-card rounded-lg border border-border p-8 md:p-12 text-center">
-              <User className="h-12 md:h-16 w-12 md:w-16 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground text-base md:text-lg">Following list is private</p>
-            </div>
+          <TabsContent value="following" className="space-y-4">
+            {following.map(followingUser => renderUserCard(followingUser, false))}
           </TabsContent>
         </Tabs>
       </div>
