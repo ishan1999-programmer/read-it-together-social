@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Heart, MessageCircle, Share2, Star, BookOpen } from 'lucide-react';
+import Comments from './Comments';
 
 interface BookPostProps {
   post: {
@@ -32,11 +33,69 @@ interface BookPostProps {
   onLike: (postId: number) => void;
 }
 
+// Mock comments for each post
+const mockComments = [
+  {
+    id: 1,
+    user: {
+      name: 'Alex Chen',
+      username: 'scifi_alex',
+      avatar: null
+    },
+    content: 'Great review! I completely agree with your thoughts on this book.',
+    timestamp: '1 hour ago',
+    isOwn: false
+  },
+  {
+    id: 2,
+    user: {
+      name: 'Current User',
+      username: 'current_user',
+      avatar: null
+    },
+    content: 'Adding this to my reading list right now!',
+    timestamp: '30 minutes ago',
+    isOwn: true
+  }
+];
+
 const BookPost: React.FC<BookPostProps> = ({ post, onLike }) => {
   const [showFullReview, setShowFullReview] = useState(false);
+  const [showComments, setShowComments] = useState(false);
+  const [comments, setComments] = useState(mockComments);
+  const [commentCount, setCommentCount] = useState(post.comments);
 
   const handleLike = () => {
     onLike(post.id);
+  };
+
+  const handleAddComment = (content: string) => {
+    const newComment = {
+      id: comments.length + 1,
+      user: {
+        name: 'Current User',
+        username: 'current_user',
+        avatar: null
+      },
+      content,
+      timestamp: 'just now',
+      isOwn: true
+    };
+    setComments([...comments, newComment]);
+    setCommentCount(prev => prev + 1);
+  };
+
+  const handleDeleteComment = (commentId: number) => {
+    setComments(comments.filter(c => c.id !== commentId));
+    setCommentCount(prev => prev - 1);
+  };
+
+  const handleEditComment = (commentId: number, content: string) => {
+    setComments(comments.map(comment => 
+      comment.id === commentId 
+        ? { ...comment, content }
+        : comment
+    ));
   };
 
   const renderStars = (rating: number) => {
@@ -139,15 +198,32 @@ const BookPost: React.FC<BookPostProps> = ({ post, onLike }) => {
             <Heart className={`h-5 w-5 ${post.isLiked ? 'fill-current' : ''}`} />
             <span>{post.likes}</span>
           </Button>
-          <Button variant="ghost" size="sm" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => setShowComments(!showComments)}
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+          >
             <MessageCircle className="h-5 w-5" />
-            <span>{post.comments}</span>
+            <span>{commentCount}</span>
           </Button>
           <Button variant="ghost" size="sm" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
             <Share2 className="h-5 w-5" />
             <span>Share</span>
           </Button>
         </div>
+
+        {/* Comments Section */}
+        {showComments && (
+          <div className="mt-6 pt-6 border-t border-border">
+            <Comments
+              comments={comments}
+              onAddComment={handleAddComment}
+              onDeleteComment={handleDeleteComment}
+              onEditComment={handleEditComment}
+            />
+          </div>
+        )}
       </CardContent>
     </Card>
   );
